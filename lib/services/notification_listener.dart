@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 class NotificationListenerService {
@@ -16,7 +17,7 @@ class NotificationListenerService {
         final data = event as Map<dynamic, dynamic>;
         return IncomingNotification.fromMap(Map<String, dynamic>.from(data));
       } catch (e) {
-        print('Error parsing notification: $e');
+        debugPrint('Error parsing notification: $e');
         rethrow;
       }
     });
@@ -33,7 +34,7 @@ class NotificationListenerService {
       );
       return hasPermission;
     } catch (e) {
-      print('Error checking notification permission: $e');
+      debugPrint('Error checking notification permission: $e');
       return false;
     }
   }
@@ -44,7 +45,7 @@ class NotificationListenerService {
       const platform = MethodChannel('yeolda/permissions');
       await platform.invokeMethod('openNotificationSettings');
     } catch (e) {
-      print('Error opening notification settings: $e');
+      debugPrint('Error opening notification settings: $e');
     }
   }
 }

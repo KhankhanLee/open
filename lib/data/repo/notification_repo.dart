@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
 import 'package:yeolda/data/db/app_db.dart';
 import 'package:yeolda/data/models/category.dart';
 import 'package:yeolda/services/classifier.dart';
@@ -44,7 +45,7 @@ class NotificationRepo {
           );
       return true;
     } catch (e) {
-      print('Error inserting notification: $e');
+      debugPrint('Error inserting notification: $e');
       return false;
     }
   }

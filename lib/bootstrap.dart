@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yeolda/services/notification_listener.dart';
 import 'package:yeolda/core/providers.dart';
@@ -19,27 +20,27 @@ void _startNotificationListener(ProviderContainer container) {
   notificationService.notificationStream.listen(
     (notification) async {
       try {
-        print('알림 수신: ${notification.appLabel} - ${notification.title}');
-        print('내용: ${notification.text}');
-        print('패키지: ${notification.packageName}');
+        debugPrint('알림 수신: ${notification.appLabel} - ${notification.title}');
+        debugPrint('내용: ${notification.text}');
+        debugPrint('패키지: ${notification.packageName}');
 
         // DB에 저장 (분류 포함)
         final success = await repo.insertNotification(notification);
 
         if (success) {
-          print('DB 저장 완료');
+          debugPrint('DB 저장 완료');
         } else {
-          print('DB 저장 실패 (중복일 수 있음)');
+          debugPrint('DB 저장 실패 (중복일 수 있음)');
         }
       } catch (e, stackTrace) {
-        print('알림 처리 오류: $e');
-        print('스택 트레이스: $stackTrace');
+        debugPrint('알림 처리 오류: $e');
+        debugPrint('스택 트레이스: $stackTrace');
       }
     },
     onError: (error) {
-      print('알림 스트림 오류: $error');
+      debugPrint('알림 스트림 오류: $error');
     },
   );
 
-  print('알림 리스너 시작됨');
+  debugPrint('알림 리스너 시작됨');
 }
