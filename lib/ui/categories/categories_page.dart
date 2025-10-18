@@ -5,6 +5,7 @@ import 'package:yeolda/data/db/app_db.dart';
 import 'package:yeolda/data/models/category.dart';
 import 'package:intl/intl.dart';
 import 'package:yeolda/ui/widgets/app_bottom_navigation_bar.dart';
+import 'package:yeolda/ui/widgets/category_utils.dart';
 
 // 선택된 카테고리를 관리하는 Notifier
 class SelectedCategoryNotifier extends Notifier<AppCategory> {
@@ -79,17 +80,19 @@ class CategoriesPage extends ConsumerWidget {
           return Padding(
             padding: const EdgeInsets.only(right: 8),
             child: ChoiceChip(
-              label: Text(_getCategoryLabel(category)),
+              label: Text(CategoryUtils.getCategoryLabel(category)),
               selected: isSelected,
               onSelected: (selected) {
                 if (selected) {
                   ref.read(selectedCategoryProvider.notifier).select(category);
                 }
               },
-              backgroundColor: _getCategoryColor(
+              backgroundColor: CategoryUtils.getCategoryColor(
                 category,
               ).withValues(alpha: 0.1),
-              selectedColor: _getCategoryColor(category).withValues(alpha: 0.3),
+              selectedColor: CategoryUtils.getCategoryColor(
+                category,
+              ).withValues(alpha: 0.3),
             ),
           );
         }).toList(),
@@ -103,13 +106,13 @@ class CategoriesPage extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            _getCategoryIcon(category),
+            CategoryUtils.getCategoryIcon(category),
             size: 64,
             color: Colors.grey.shade400,
           ),
           const SizedBox(height: 16),
           Text(
-            '${_getCategoryLabel(category)} 알림이 없습니다',
+            '${CategoryUtils.getCategoryLabel(category)} 알림이 없습니다',
             style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
           ),
         ],
@@ -130,7 +133,7 @@ class CategoriesPage extends ConsumerWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: _getCategoryColor(
+                color: CategoryUtils.getCategoryColor(
                   AppCategory.values.firstWhere(
                     (c) => c.name == notification.assignedCategory,
                     orElse: () => AppCategory.other,
@@ -139,7 +142,7 @@ class CategoriesPage extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
-                _getCategoryIcon(
+                CategoryUtils.getCategoryIcon(
                   AppCategory.values.firstWhere(
                     (c) => c.name == notification.assignedCategory,
                     orElse: () => AppCategory.other,
@@ -191,63 +194,6 @@ class CategoriesPage extends ConsumerWidget {
         );
       },
     );
-  }
-
-  String _getCategoryLabel(AppCategory category) {
-    switch (category) {
-      case AppCategory.messenger:
-        return '💬 메신저';
-      case AppCategory.study:
-        return '📚 공부';
-      case AppCategory.finance:
-        return '💰 금융';
-      case AppCategory.schedule:
-        return '📅 일정';
-      case AppCategory.shopping:
-        return '🛍️ 쇼핑';
-      case AppCategory.news:
-        return '📰 뉴스';
-      case AppCategory.other:
-        return '📱 기타';
-    }
-  }
-
-  Color _getCategoryColor(AppCategory category) {
-    switch (category) {
-      case AppCategory.messenger:
-        return Colors.blue;
-      case AppCategory.study:
-        return Colors.purple;
-      case AppCategory.finance:
-        return Colors.green;
-      case AppCategory.schedule:
-        return Colors.orange;
-      case AppCategory.shopping:
-        return Colors.pink;
-      case AppCategory.news:
-        return Colors.red;
-      case AppCategory.other:
-        return Colors.grey;
-    }
-  }
-
-  IconData _getCategoryIcon(AppCategory category) {
-    switch (category) {
-      case AppCategory.messenger:
-        return Icons.chat_bubble;
-      case AppCategory.study:
-        return Icons.school;
-      case AppCategory.finance:
-        return Icons.account_balance_wallet;
-      case AppCategory.schedule:
-        return Icons.calendar_today;
-      case AppCategory.shopping:
-        return Icons.shopping_bag;
-      case AppCategory.news:
-        return Icons.article;
-      case AppCategory.other:
-        return Icons.notifications;
-    }
   }
 
   String _formatTime(int milliseconds) {

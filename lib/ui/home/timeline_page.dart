@@ -6,6 +6,7 @@ import 'package:yeolda/data/db/app_db.dart';
 import 'package:yeolda/data/models/category.dart';
 import 'package:intl/intl.dart';
 import 'package:yeolda/ui/widgets/app_bottom_navigation_bar.dart';
+import 'package:yeolda/ui/widgets/category_utils.dart';
 
 // 타임라인 데이터를 가져오는 Provider
 final timelineProvider = FutureProvider.autoDispose
@@ -153,7 +154,7 @@ class _TimelinePageState extends ConsumerState<TimelinePage> {
               return Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: ChoiceChip(
-                  label: Text(_getCategoryLabelFromEnum(category)),
+                  label: Text(CategoryUtils.getCategoryLabel(category)),
                   selected: _filter.category == category,
                   onSelected: (selected) {
                     setState(() {
@@ -221,11 +222,15 @@ class _TimelinePageState extends ConsumerState<TimelinePage> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: _getCategoryColor(notification.assignedCategory),
+                      color: CategoryUtils.getCategoryColorFromString(
+                        notification.assignedCategory,
+                      ),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
-                      _getCategoryIcon(notification.assignedCategory),
+                      CategoryUtils.getCategoryIconFromString(
+                        notification.assignedCategory,
+                      ),
                       color: Colors.white,
                     ),
                   ),
@@ -277,10 +282,12 @@ class _TimelinePageState extends ConsumerState<TimelinePage> {
                   ),
                   Chip(
                     label: Text(
-                      _getCategoryLabel(notification.assignedCategory),
+                      CategoryUtils.getCategoryLabelFromString(
+                        notification.assignedCategory,
+                      ),
                       style: const TextStyle(fontSize: 12),
                     ),
-                    backgroundColor: _getCategoryColor(
+                    backgroundColor: CategoryUtils.getCategoryColorFromString(
                       notification.assignedCategory,
                     ).withValues(alpha: 0.2),
                   ),
@@ -335,13 +342,15 @@ class _TimelinePageState extends ConsumerState<TimelinePage> {
                         width: 50,
                         height: 50,
                         decoration: BoxDecoration(
-                          color: _getCategoryColor(
+                          color: CategoryUtils.getCategoryColorFromString(
                             notification.assignedCategory,
                           ),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Icon(
-                          _getCategoryIcon(notification.assignedCategory),
+                          CategoryUtils.getCategoryIconFromString(
+                            notification.assignedCategory,
+                          ),
                           color: Colors.white,
                           size: 28,
                         ),
@@ -468,91 +477,6 @@ class _TimelinePageState extends ConsumerState<TimelinePage> {
         );
       },
     );
-  }
-
-  String _getCategoryLabel(String categoryName) {
-    try {
-      final category = AppCategory.values.firstWhere(
-        (c) => c.name == categoryName,
-        orElse: () => AppCategory.other,
-      );
-      return _getCategoryLabelFromEnum(category);
-    } catch (e) {
-      return '기타';
-    }
-  }
-
-  String _getCategoryLabelFromEnum(AppCategory category) {
-    switch (category) {
-      case AppCategory.messenger:
-        return '💬 메신저';
-      case AppCategory.study:
-        return '📚 공부';
-      case AppCategory.finance:
-        return '💰 금융';
-      case AppCategory.schedule:
-        return '📅 일정';
-      case AppCategory.shopping:
-        return '🛍️ 쇼핑';
-      case AppCategory.news:
-        return '📰 뉴스';
-      case AppCategory.other:
-        return '📱 기타';
-    }
-  }
-
-  Color _getCategoryColor(String categoryName) {
-    try {
-      final category = AppCategory.values.firstWhere(
-        (c) => c.name == categoryName,
-        orElse: () => AppCategory.other,
-      );
-      switch (category) {
-        case AppCategory.messenger:
-          return Colors.blue;
-        case AppCategory.study:
-          return Colors.purple;
-        case AppCategory.finance:
-          return Colors.green;
-        case AppCategory.schedule:
-          return Colors.orange;
-        case AppCategory.shopping:
-          return Colors.pink;
-        case AppCategory.news:
-          return Colors.red;
-        case AppCategory.other:
-          return Colors.grey;
-      }
-    } catch (e) {
-      return Colors.grey;
-    }
-  }
-
-  IconData _getCategoryIcon(String categoryName) {
-    try {
-      final category = AppCategory.values.firstWhere(
-        (c) => c.name == categoryName,
-        orElse: () => AppCategory.other,
-      );
-      switch (category) {
-        case AppCategory.messenger:
-          return Icons.chat_bubble;
-        case AppCategory.study:
-          return Icons.school;
-        case AppCategory.finance:
-          return Icons.account_balance_wallet;
-        case AppCategory.schedule:
-          return Icons.calendar_today;
-        case AppCategory.shopping:
-          return Icons.shopping_bag;
-        case AppCategory.news:
-          return Icons.article;
-        case AppCategory.other:
-          return Icons.notifications;
-      }
-    } catch (e) {
-      return Icons.notifications;
-    }
   }
 
   String _formatTime(int milliseconds) {

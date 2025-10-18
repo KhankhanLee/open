@@ -1,4 +1,12 @@
 enum AppCategory {
+  kakaotalk,
+  instagram,
+  telegram,
+  discord,
+  slack,
+  line,
+  wechat,
+  whatsapp,
   messenger,
   study,
   finance,

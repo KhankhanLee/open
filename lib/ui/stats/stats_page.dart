@@ -5,6 +5,7 @@ import 'package:yeolda/core/providers.dart';
 import 'package:yeolda/data/models/category.dart';
 import 'package:yeolda/data/repo/notification_repo.dart';
 import 'package:yeolda/ui/widgets/app_bottom_navigation_bar.dart';
+import 'package:yeolda/ui/widgets/category_utils.dart';
 
 // 통계 데이터 Provider
 final statsProvider = FutureProvider.autoDispose((ref) async {
@@ -345,7 +346,7 @@ class StatsPage extends ConsumerWidget {
                     return PieChartSectionData(
                       value: entry.value.toDouble(),
                       title: '$percentage%',
-                      color: _getCategoryColor(entry.key),
+                      color: CategoryUtils.getCategoryColor(entry.key),
                       radius: 80,
                       titleStyle: const TextStyle(
                         fontSize: 12,
@@ -366,10 +367,10 @@ class StatsPage extends ConsumerWidget {
               children: stats.byCategory.entries.map((entry) {
                 return Chip(
                   avatar: CircleAvatar(
-                    backgroundColor: _getCategoryColor(entry.key),
+                    backgroundColor: CategoryUtils.getCategoryColor(entry.key),
                   ),
                   label: Text(
-                    '${_getCategoryLabel(entry.key)}: ${entry.value}',
+                    '${CategoryUtils.getCategoryLabel(entry.key)}: ${entry.value}',
                   ),
                 );
               }).toList(),
@@ -425,43 +426,5 @@ class StatsPage extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  Color _getCategoryColor(AppCategory category) {
-    switch (category) {
-      case AppCategory.messenger:
-        return Colors.blue;
-      case AppCategory.study:
-        return Colors.purple;
-      case AppCategory.finance:
-        return Colors.green;
-      case AppCategory.schedule:
-        return Colors.orange;
-      case AppCategory.shopping:
-        return Colors.pink;
-      case AppCategory.news:
-        return Colors.red;
-      case AppCategory.other:
-        return Colors.grey;
-    }
-  }
-
-  String _getCategoryLabel(AppCategory category) {
-    switch (category) {
-      case AppCategory.messenger:
-        return '💬 메신저';
-      case AppCategory.study:
-        return '📚 공부';
-      case AppCategory.finance:
-        return '💰 금융';
-      case AppCategory.schedule:
-        return '📅 일정';
-      case AppCategory.shopping:
-        return '🛍️ 쇼핑';
-      case AppCategory.news:
-        return '📰 뉴스';
-      case AppCategory.other:
-        return '📱 기타';
-    }
   }
 }
