@@ -16,7 +16,7 @@ class CustomCategoryRepo {
           CustomCategoriesCompanion.insert(
             name: category.name,
             iconCodePoint: category.icon.codePoint,
-            colorValue: category.color.value,
+            colorValue: category.color.toARGB32(),
             createdAt: category.createdAt.millisecondsSinceEpoch,
             isActive: Value(category.isActive),
           ),
@@ -59,7 +59,7 @@ class CustomCategoryRepo {
       CustomCategoriesCompanion(
         name: Value(category.name),
         iconCodePoint: Value(category.icon.codePoint),
-        colorValue: Value(category.color.value),
+        colorValue: Value(category.color.toARGB32()),
         isActive: Value(category.isActive),
       ),
     );

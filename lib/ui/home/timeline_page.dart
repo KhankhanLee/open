@@ -7,6 +7,7 @@ import 'package:yeolda/data/models/category.dart';
 import 'package:intl/intl.dart';
 import 'package:yeolda/ui/widgets/app_bottom_navigation_bar.dart';
 import 'package:yeolda/ui/widgets/category_utils.dart';
+import 'package:yeolda/ui/widgets/responsive_layout.dart';
 
 // 타임라인 데이터를 가져오는 Provider
 final timelineProvider = FutureProvider.autoDispose
@@ -115,7 +116,9 @@ class _TimelinePageState extends ConsumerState<TimelinePage> {
 
   Widget _buildFilterChips() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: ResponsiveLayout.horizontalPadding(
+        context,
+      ).add(ResponsiveLayout.verticalPadding(context)),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
@@ -204,14 +207,23 @@ class _TimelinePageState extends ConsumerState<TimelinePage> {
   }
 
   Widget _buildNotificationCard(NotificationEntry notification) {
+    final iconSize = ResponsiveLayout.value(
+      context,
+      mobile: 40.0,
+      tablet: 48.0,
+      desktop: 56.0,
+    );
+
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: ResponsiveLayout.horizontalPadding(
+        context,
+      ).add(const EdgeInsets.symmetric(vertical: 8)),
       child: InkWell(
         onTap: () {
           _showNotificationDetail(notification);
         },
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: ResponsiveLayout.padding(context),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -219,8 +231,8 @@ class _TimelinePageState extends ConsumerState<TimelinePage> {
                 children: [
                   // 앱 아이콘 플레이스홀더
                   Container(
-                    width: 40,
-                    height: 40,
+                    width: iconSize,
+                    height: iconSize,
                     decoration: BoxDecoration(
                       color: CategoryUtils.getCategoryColorFromString(
                         notification.assignedCategory,
@@ -232,6 +244,7 @@ class _TimelinePageState extends ConsumerState<TimelinePage> {
                         notification.assignedCategory,
                       ),
                       color: Colors.white,
+                      size: iconSize * 0.6,
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -241,10 +254,13 @@ class _TimelinePageState extends ConsumerState<TimelinePage> {
                       children: [
                         Row(
                           children: [
-                            Text(
-                              notification.appLabel,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
+                            Flexible(
+                              child: Text(
+                                notification.appLabel,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             if (notification.isImportant) ...[

@@ -4,6 +4,7 @@ import 'package:yeolda/core/providers.dart';
 import 'package:yeolda/data/db/app_db.dart';
 import 'package:yeolda/ui/widgets/app_bottom_navigation_bar.dart';
 import 'package:go_router/go_router.dart';
+import 'package:yeolda/ui/widgets/responsive_layout.dart';
 
 // 학습 아이템 Provider
 final studyItemsProvider = FutureProvider.autoDispose((ref) async {
@@ -98,45 +99,61 @@ class StudyPage extends ConsumerWidget {
       groupedItems.putIfAbsent(item.lang, () => []).add(item);
     }
 
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        _buildStatsSummary(items),
-        const SizedBox(height: 24),
-        ...groupedItems.entries.map((entry) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Row(
-                  children: [
-                    Text(
-                      _getLanguageFlag(entry.key),
-                      style: const TextStyle(fontSize: 24),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      _getLanguageName(entry.key),
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+    return ResponsiveContainer(
+      child: ListView(
+        padding: ResponsiveLayout.padding(context),
+        children: [
+          _buildStatsSummary(items),
+          const SizedBox(height: 24),
+          ...groupedItems.entries.map((entry) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: ResponsiveLayout.verticalPadding(context),
+                  child: Row(
+                    children: [
+                      Text(
+                        _getLanguageFlag(entry.key),
+                        style: TextStyle(
+                          fontSize: ResponsiveLayout.value(
+                            context,
+                            mobile: 24.0,
+                            tablet: 28.0,
+                            desktop: 32.0,
+                          ),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Chip(
-                      label: Text('${entry.value.length}개'),
-                      backgroundColor: Colors.blue.shade100,
-                    ),
-                  ],
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          _getLanguageName(entry.key),
+                          style: TextStyle(
+                            fontSize: ResponsiveLayout.value(
+                              context,
+                              mobile: 18.0,
+                              tablet: 20.0,
+                              desktop: 22.0,
+                            ),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Chip(
+                        label: Text('${entry.value.length}개'),
+                        backgroundColor: Colors.blue.shade100,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              ...entry.value.map((item) => _buildStudyCard(context, item)),
-              const SizedBox(height: 16),
-            ],
-          );
-        }),
-      ],
+                ...entry.value.map((item) => _buildStudyCard(context, item)),
+                const SizedBox(height: 16),
+              ],
+            );
+          }),
+        ],
+      ),
     );
   }
 
@@ -191,7 +208,7 @@ class StudyPage extends ConsumerWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: ResponsiveLayout.padding(context),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

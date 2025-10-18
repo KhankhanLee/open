@@ -181,7 +181,7 @@ class _AddCategoryDialogState extends ConsumerState<AddCategoryDialog> {
                     height: 40,
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? _selectedColor.withOpacity(0.2)
+                          ? _selectedColor.withValues(alpha:0.2)
                           : Colors.grey[200],
                       shape: BoxShape.circle,
                       border: isSelected
@@ -215,7 +215,7 @@ class _AddCategoryDialogState extends ConsumerState<AddCategoryDialog> {
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(
                     context,
-                  ).colorScheme.onSurface.withOpacity(0.5),
+                  ).colorScheme.onSurface.withValues(alpha:0.5),
                 ),
               )
             else

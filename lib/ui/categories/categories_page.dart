@@ -6,6 +6,7 @@ import 'package:yeolda/data/models/category.dart';
 import 'package:intl/intl.dart';
 import 'package:yeolda/ui/widgets/app_bottom_navigation_bar.dart';
 import 'package:yeolda/ui/widgets/category_utils.dart';
+import 'package:yeolda/ui/widgets/responsive_layout.dart';
 
 // 선택된 카테고리를 관리하는 Notifier
 class SelectedCategoryNotifier extends Notifier<AppCategory> {
@@ -46,7 +47,7 @@ class CategoriesPage extends ConsumerWidget {
         child: Material(
           child: Column(
             children: [
-              _buildCategoryTabs(ref, selectedCategory),
+              _buildCategoryTabs(context, ref, selectedCategory),
               Expanded(
                 child: notificationsAsync.when(
                   data: (notifications) {
@@ -68,19 +69,38 @@ class CategoriesPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildCategoryTabs(WidgetRef ref, AppCategory selected) {
+  Widget _buildCategoryTabs(
+    BuildContext context,
+    WidgetRef ref,
+    AppCategory selected,
+  ) {
     return Container(
-      height: 60,
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      height: ResponsiveLayout.value(
+        context,
+        mobile: 60.0,
+        tablet: 70.0,
+        desktop: 80.0,
+      ),
+      padding: ResponsiveLayout.verticalPadding(context),
       child: ListView(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: ResponsiveLayout.horizontalPadding(context),
         children: AppCategory.values.map((category) {
           final isSelected = category == selected;
           return Padding(
             padding: const EdgeInsets.only(right: 8),
             child: ChoiceChip(
-              label: Text(CategoryUtils.getCategoryLabel(category)),
+              label: Text(
+                CategoryUtils.getCategoryLabel(category),
+                style: TextStyle(
+                  fontSize: ResponsiveLayout.value(
+                    context,
+                    mobile: 14.0,
+                    tablet: 16.0,
+                    desktop: 18.0,
+                  ),
+                ),
+              ),
               selected: isSelected,
               onSelected: (selected) {
                 if (selected) {
@@ -121,76 +141,89 @@ class CategoriesPage extends ConsumerWidget {
   }
 
   Widget _buildNotificationList(List<NotificationEntry> notifications) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: notifications.length,
-      itemBuilder: (context, index) {
-        final notification = notifications[index];
-        return Card(
-          margin: const EdgeInsets.only(bottom: 12),
-          child: ListTile(
-            leading: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: CategoryUtils.getCategoryColor(
-                  AppCategory.values.firstWhere(
-                    (c) => c.name == notification.assignedCategory,
-                    orElse: () => AppCategory.other,
-                  ),
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
-                CategoryUtils.getCategoryIcon(
-                  AppCategory.values.firstWhere(
-                    (c) => c.name == notification.assignedCategory,
-                    orElse: () => AppCategory.other,
-                  ),
-                ),
-                color: Colors.white,
-              ),
-            ),
-            title: Text(
-              notification.title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontWeight: notification.isRead
-                    ? FontWeight.normal
-                    : FontWeight.bold,
-              ),
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (notification.content != null &&
-                    notification.content!.isNotEmpty)
-                  Text(
-                    notification.content!,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Text(
-                      notification.appLabel,
-                      style: const TextStyle(fontSize: 12),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final iconSize = ResponsiveLayout.value(
+          context,
+          mobile: 40.0,
+          tablet: 48.0,
+          desktop: 56.0,
+        );
+
+        return ListView.builder(
+          padding: ResponsiveLayout.padding(context),
+          itemCount: notifications.length,
+          itemBuilder: (context, index) {
+            final notification = notifications[index];
+            return Card(
+              margin: const EdgeInsets.only(bottom: 12),
+              child: ListTile(
+                contentPadding: ResponsiveLayout.padding(context),
+                leading: Container(
+                  width: iconSize,
+                  height: iconSize,
+                  decoration: BoxDecoration(
+                    color: CategoryUtils.getCategoryColor(
+                      AppCategory.values.firstWhere(
+                        (c) => c.name == notification.assignedCategory,
+                        orElse: () => AppCategory.other,
+                      ),
                     ),
-                    const Text(' • ', style: TextStyle(fontSize: 12)),
-                    Text(
-                      _formatTime(notification.postedAt),
-                      style: const TextStyle(fontSize: 12),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    CategoryUtils.getCategoryIcon(
+                      AppCategory.values.firstWhere(
+                        (c) => c.name == notification.assignedCategory,
+                        orElse: () => AppCategory.other,
+                      ),
+                    ),
+                    size: iconSize * 0.6,
+                    color: Colors.white,
+                  ),
+                ),
+                title: Text(
+                  notification.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontWeight: notification.isRead
+                        ? FontWeight.normal
+                        : FontWeight.bold,
+                  ),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (notification.content != null &&
+                        notification.content!.isNotEmpty)
+                      Text(
+                        notification.content!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Text(
+                          notification.appLabel,
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                        const Text(' • ', style: TextStyle(fontSize: 12)),
+                        Text(
+                          _formatTime(notification.postedAt),
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
-            trailing: notification.isImportant
-                ? const Icon(Icons.priority_high, color: Colors.red)
-                : null,
-          ),
+                trailing: notification.isImportant
+                    ? const Icon(Icons.priority_high, color: Colors.red)
+                    : null,
+              ),
+            );
+          },
         );
       },
     );

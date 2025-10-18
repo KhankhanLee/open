@@ -102,7 +102,7 @@ class _CustomCategoriesPageState extends ConsumerState<CustomCategoriesPage> {
                     size: 80,
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withOpacity(0.3),
+                    ).colorScheme.onSurface.withValues(alpha:0.3),
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -110,7 +110,7 @@ class _CustomCategoriesPageState extends ConsumerState<CustomCategoriesPage> {
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.6),
+                      ).colorScheme.onSurface.withValues(alpha:0.6),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -119,7 +119,7 @@ class _CustomCategoriesPageState extends ConsumerState<CustomCategoriesPage> {
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.5),
+                      ).colorScheme.onSurface.withValues(alpha:0.5),
                     ),
                   ),
                 ],
@@ -134,7 +134,7 @@ class _CustomCategoriesPageState extends ConsumerState<CustomCategoriesPage> {
                   margin: const EdgeInsets.only(bottom: 12),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: category.color.withOpacity(0.2),
+                      backgroundColor: category.color.withValues(alpha:0.2),
                       child: Icon(category.icon, color: category.color),
                     ),
                     title: Text(

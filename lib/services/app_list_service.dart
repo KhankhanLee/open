@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 
 class InstalledApp {
   final String packageName;
@@ -27,7 +28,7 @@ class AppListService {
           .map((app) => InstalledApp.fromMap(app as Map<dynamic, dynamic>))
           .toList();
     } catch (e) {
-      print('Error getting installed apps: $e');
+      debugPrint('Error getting installed apps: $e');
       return [];
     }
   }

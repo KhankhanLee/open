@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yeolda/services/notification_listener.dart';
 import 'package:go_router/go_router.dart';
+import 'package:yeolda/ui/widgets/responsive_layout.dart';
 
 class OnboardingPage extends ConsumerStatefulWidget {
   const OnboardingPage({super.key});
@@ -50,42 +51,79 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   }
 
   Widget _buildWelcomePage() {
-    return Padding(
-      padding: const EdgeInsets.all(32.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.notifications_active, size: 120, color: Colors.blue),
-          const SizedBox(height: 32),
-          const Text(
-            '열다 | Open',
-            style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            '모든 알림을 한곳에서\n자동으로 분류하고 관리하세요',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 18, color: Colors.grey),
-          ),
-          const SizedBox(height: 48),
-          _buildFeatureItem(
-            Icons.category,
-            '자동 분류',
-            '메신저, 공부, 금융, 일정 등으로 자동 분류',
-          ),
-          const SizedBox(height: 16),
-          _buildFeatureItem(Icons.timeline, '타임라인', '모든 알림을 시간순으로 확인'),
-          const SizedBox(height: 16),
-          _buildFeatureItem(Icons.school, '학습 기능', '알림 속 외국어 문장으로 학습'),
-        ],
+    return ResponsiveContainer(
+      child: Padding(
+        padding: ResponsiveLayout.padding(context),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.notifications_active,
+              size: ResponsiveLayout.value(
+                context,
+                mobile: 100.0,
+                tablet: 120.0,
+                desktop: 140.0,
+              ),
+              color: Colors.blue,
+            ),
+            const SizedBox(height: 32),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                '열다 | Open',
+                style: TextStyle(
+                  fontSize: ResponsiveLayout.value(
+                    context,
+                    mobile: 28.0,
+                    tablet: 32.0,
+                    desktop: 36.0,
+                  ),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              '모든 알림을 한곳에서\n자동으로 분류하고 관리하세요',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: ResponsiveLayout.value(
+                  context,
+                  mobile: 16.0,
+                  tablet: 18.0,
+                  desktop: 20.0,
+                ),
+                color: Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 48),
+            _buildFeatureItem(
+              Icons.category,
+              '자동 분류',
+              '메신저, 공부, 금융, 일정 등으로 자동 분류',
+            ),
+            const SizedBox(height: 16),
+            _buildFeatureItem(Icons.timeline, '타임라인', '모든 알림을 시간순으로 확인'),
+            const SizedBox(height: 16),
+            _buildFeatureItem(Icons.school, '학습 기능', '알림 속 외국어 문장으로 학습'),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildFeatureItem(IconData icon, String title, String description) {
+    final iconSize = ResponsiveLayout.value(
+      context,
+      mobile: 32.0,
+      tablet: 40.0,
+      desktop: 48.0,
+    );
+
     return Row(
       children: [
-        Icon(icon, color: Colors.blue, size: 32),
+        Icon(icon, color: Colors.blue, size: iconSize),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
@@ -93,8 +131,13 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
             children: [
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 16,
+                style: TextStyle(
+                  fontSize: ResponsiveLayout.value(
+                    context,
+                    mobile: 16.0,
+                    tablet: 18.0,
+                    desktop: 20.0,
+                  ),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -210,9 +253,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha:0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: color.withValues(alpha:0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

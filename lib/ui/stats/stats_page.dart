@@ -6,6 +6,7 @@ import 'package:yeolda/data/models/category.dart';
 import 'package:yeolda/data/repo/notification_repo.dart';
 import 'package:yeolda/ui/widgets/app_bottom_navigation_bar.dart';
 import 'package:yeolda/ui/widgets/category_utils.dart';
+import 'package:yeolda/ui/widgets/responsive_layout.dart';
 
 // 통계 데이터 Provider
 final statsProvider = FutureProvider.autoDispose((ref) async {
@@ -91,67 +92,122 @@ class StatsPage extends ConsumerWidget {
   }
 
   Widget _buildStatsContent(BuildContext context, StatsData stats) {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        _buildSummaryCards(stats),
-        const SizedBox(height: 24),
-        _buildHourChart(stats),
-        const SizedBox(height: 24),
-        _buildWeekdayChart(stats),
-        const SizedBox(height: 24),
-        _buildCategoryChart(stats),
-        const SizedBox(height: 24),
-        _buildTopApps(stats),
-      ],
+    return ResponsiveContainer(
+      child: ListView(
+        padding: ResponsiveLayout.padding(context),
+        children: [
+          _buildSummaryCards(context, stats),
+          SizedBox(
+            height: ResponsiveLayout.value(
+              context,
+              mobile: 16.0,
+              tablet: 24.0,
+              desktop: 32.0,
+            ),
+          ),
+          _buildHourChart(context, stats),
+          SizedBox(
+            height: ResponsiveLayout.value(
+              context,
+              mobile: 16.0,
+              tablet: 24.0,
+              desktop: 32.0,
+            ),
+          ),
+          _buildWeekdayChart(context, stats),
+          SizedBox(
+            height: ResponsiveLayout.value(
+              context,
+              mobile: 16.0,
+              tablet: 24.0,
+              desktop: 32.0,
+            ),
+          ),
+          _buildCategoryChart(context, stats),
+          SizedBox(
+            height: ResponsiveLayout.value(
+              context,
+              mobile: 16.0,
+              tablet: 24.0,
+              desktop: 32.0,
+            ),
+          ),
+          _buildTopApps(context, stats),
+        ],
+      ),
     );
   }
 
-  Widget _buildSummaryCards(StatsData stats) {
-    return Row(
+  Widget _buildSummaryCards(BuildContext context, StatsData stats) {
+    final cardPadding = ResponsiveLayout.value(
+      context,
+      mobile: 16.0,
+      tablet: 20.0,
+      desktop: 24.0,
+    );
+    final iconSize = ResponsiveLayout.value(
+      context,
+      mobile: 32.0,
+      tablet: 40.0,
+      desktop: 48.0,
+    );
+
+    return ResponsiveRowColumn(
+      spacing: 16,
       children: [
-        Expanded(
+        Flexible(
+          flex: 1,
           child: Card(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(cardPadding),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.notifications, size: 32, color: Colors.blue),
+                  Icon(Icons.notifications, size: iconSize, color: Colors.blue),
                   const SizedBox(height: 8),
-                  Text(
-                    '${stats.totalCount}',
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      '${stats.totalCount}',
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  const Text('전체 알림'),
+                  const SizedBox(height: 4),
+                  const FittedBox(fit: BoxFit.scaleDown, child: Text('전체 알림')),
                 ],
               ),
             ),
           ),
         ),
-        const SizedBox(width: 16),
-        Expanded(
+        Flexible(
+          flex: 1,
           child: Card(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(cardPadding),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.mark_email_unread,
-                    size: 32,
+                    size: iconSize,
                     color: Colors.orange,
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    '${stats.unreadCount}',
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      '${stats.unreadCount}',
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  const Text('읽지 않음'),
+                  const SizedBox(height: 4),
+                  const FittedBox(fit: BoxFit.scaleDown, child: Text('읽지 않음')),
                 ],
               ),
             ),
@@ -161,16 +217,40 @@ class StatsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildHourChart(StatsData stats) {
+  Widget _buildHourChart(BuildContext context, StatsData stats) {
+    final chartHeight = ResponsiveLayout.value(
+      context,
+      mobile: 200.0,
+      tablet: 250.0,
+      desktop: 300.0,
+    );
+    final barWidth = ResponsiveLayout.value(
+      context,
+      mobile: 40.0,
+      tablet: 50.0,
+      desktop: 60.0,
+    );
+
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: ResponsiveLayout.padding(context),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              '시간대별 알림',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                '시간대별 알림',
+                style: TextStyle(
+                  fontSize: ResponsiveLayout.value(
+                    context,
+                    mobile: 16.0,
+                    tablet: 18.0,
+                    desktop: 20.0,
+                  ),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             const SizedBox(height: 8),
             const Text(
@@ -179,11 +259,11 @@ class StatsPage extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             SizedBox(
-              height: 200,
+              height: chartHeight,
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: SizedBox(
-                  width: 24 * 40.0, // 24시간 * 40px
+                  width: 24 * barWidth,
                   child: BarChart(
                     BarChartData(
                       alignment: BarChartAlignment.spaceAround,
@@ -245,22 +325,39 @@ class StatsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildWeekdayChart(StatsData stats) {
+  Widget _buildWeekdayChart(BuildContext context, StatsData stats) {
     final weekdays = ['월', '화', '수', '목', '금', '토', '일'];
+    final chartHeight = ResponsiveLayout.value(
+      context,
+      mobile: 200.0,
+      tablet: 250.0,
+      desktop: 300.0,
+    );
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: ResponsiveLayout.padding(context),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              '요일별 알림',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                '요일별 알림',
+                style: TextStyle(
+                  fontSize: ResponsiveLayout.value(
+                    context,
+                    mobile: 16.0,
+                    tablet: 18.0,
+                    desktop: 20.0,
+                  ),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             const SizedBox(height: 16),
             SizedBox(
-              height: 200,
+              height: chartHeight,
               child: BarChart(
                 BarChartData(
                   alignment: BarChartAlignment.spaceAround,
@@ -313,12 +410,12 @@ class StatsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildCategoryChart(StatsData stats) {
+  Widget _buildCategoryChart(BuildContext context, StatsData stats) {
     if (stats.byCategory.isEmpty) {
-      return const Card(
+      return Card(
         child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Center(child: Text('데이터가 없습니다')),
+          padding: ResponsiveLayout.padding(context),
+          child: const Center(child: Text('데이터가 없습니다')),
         ),
       );
     }
@@ -327,13 +424,24 @@ class StatsPage extends ConsumerWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: ResponsiveLayout.padding(context),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              '카테고리별 알림',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                '카테고리별 알림',
+                style: TextStyle(
+                  fontSize: ResponsiveLayout.value(
+                    context,
+                    mobile: 16.0,
+                    tablet: 18.0,
+                    desktop: 20.0,
+                  ),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             const SizedBox(height: 16),
             SizedBox(
@@ -381,25 +489,36 @@ class StatsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildTopApps(StatsData stats) {
+  Widget _buildTopApps(BuildContext context, StatsData stats) {
     if (stats.topApps.isEmpty) {
-      return const Card(
+      return Card(
         child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Center(child: Text('데이터가 없습니다')),
+          padding: ResponsiveLayout.padding(context),
+          child: const Center(child: Text('데이터가 없습니다')),
         ),
       );
     }
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: ResponsiveLayout.padding(context),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              '앱별 통계 (Top 10)',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                '앱별 통계 (Top 10)',
+                style: TextStyle(
+                  fontSize: ResponsiveLayout.value(
+                    context,
+                    mobile: 16.0,
+                    tablet: 18.0,
+                    desktop: 20.0,
+                  ),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             const SizedBox(height: 16),
             ...stats.topApps.asMap().entries.map((entry) {
