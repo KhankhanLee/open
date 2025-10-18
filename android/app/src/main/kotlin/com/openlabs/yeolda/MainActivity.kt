@@ -12,6 +12,7 @@ import org.json.JSONObject
 class MainActivity : FlutterActivity() {
     private val PERMISSION_CHANNEL = "yeolda/permissions"
     private val NOTIFICATION_CHANNEL = "yeolda/notifications"
+    private val APP_LIST_CHANNEL = "yeolda/app_list"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -27,6 +28,20 @@ class MainActivity : FlutterActivity() {
                     "openNotificationSettings" -> {
                         openNotificationSettings()
                         result.success(null)
+                    }
+                    else -> {
+                        result.notImplemented()
+                    }
+                }
+            }
+
+        // App List MethodChannel
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, APP_LIST_CHANNEL)
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "getInstalledApps" -> {
+                        val apps = getInstalledApps()
+                        result.success(apps)
                     }
                     else -> {
                         result.notImplemented()
@@ -55,5 +70,32 @@ class MainActivity : FlutterActivity() {
     private fun openNotificationSettings() {
         val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
         startActivity(intent)
+    }
+
+    private fun getInstalledApps(): List<Map<String, String>> {
+        val pm = packageManager
+        val apps = mutableListOf<Map<String, String>>()
+        
+        val intent = Intent(Intent.ACTION_MAIN, null)
+        intent.addCategory(Intent.CATEGORY_LAUNCHER)
+        
+        val resolveInfoList = pm.queryIntentActivities(intent, 0)
+        
+        for (resolveInfo in resolveInfoList) {
+            val appInfo = resolveInfo.activityInfo.applicationInfo
+            val packageName = appInfo.packageName
+            val appName = pm.getApplicationLabel(appInfo).toString()
+            
+            // 시스템 앱 제외 (선택사항)
+            apps.add(
+                mapOf(
+                    "packageName" to packageName,
+                    "appLabel" to appName
+                )
+            )
+        }
+        
+        // 앱 이름으로 정렬
+        return apps.sortedBy { it["appLabel"] }
     }
 }

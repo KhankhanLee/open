@@ -96,9 +96,7 @@ class SettingsPage extends ConsumerWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => const CustomCategoriesPage(),
-          ),
+          MaterialPageRoute(builder: (context) => const CustomCategoriesPage()),
         );
       },
     );

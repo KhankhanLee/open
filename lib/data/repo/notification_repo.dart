@@ -240,28 +240,28 @@ class NotificationRepo {
 
   /// 특정 기간 이전 알림 삭제
   Future<void> deleteOlderThan(DateTime date) async {
-    await (_db.delete(_db.notificationEntries)
-          ..where(
-            (t) => t.postedAt.isSmallerThanValue(date.millisecondsSinceEpoch),
-          ))
+    await (_db.delete(_db.notificationEntries)..where(
+          (t) => t.postedAt.isSmallerThanValue(date.millisecondsSinceEpoch),
+        ))
         .go();
   }
 
   /// 모든 고유 패키지명과 앱 라벨 가져오기
   Future<List<AppInfo>> getAllApps() async {
-    final result = await (_db.selectOnly(_db.notificationEntries)
-          ..addColumns([
-            _db.notificationEntries.packageName,
-            _db.notificationEntries.appLabel,
-          ])
-          ..groupBy([
-            _db.notificationEntries.packageName,
-            _db.notificationEntries.appLabel,
-          ])
-          ..orderBy([
-            OrderingTerm(expression: _db.notificationEntries.appLabel),
-          ]))
-        .get();
+    final result =
+        await (_db.selectOnly(_db.notificationEntries)
+              ..addColumns([
+                _db.notificationEntries.packageName,
+                _db.notificationEntries.appLabel,
+              ])
+              ..groupBy([
+                _db.notificationEntries.packageName,
+                _db.notificationEntries.appLabel,
+              ])
+              ..orderBy([
+                OrderingTerm(expression: _db.notificationEntries.appLabel),
+              ]))
+            .get();
 
     return result.map((row) {
       return AppInfo(
@@ -288,8 +288,5 @@ class AppInfo {
   final String packageName;
   final String appLabel;
 
-  AppInfo({
-    required this.packageName,
-    required this.appLabel,
-  });
+  AppInfo({required this.packageName, required this.appLabel});
 }

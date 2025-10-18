@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:yeolda/core/providers.dart';
-import 'package:yeolda/data/repo/notification_repo.dart';
+import 'package:yeolda/services/app_list_service.dart';
 
 class AppSelectorDialog extends ConsumerStatefulWidget {
   final List<String> selectedPackages;
 
-  const AppSelectorDialog({
-    super.key,
-    required this.selectedPackages,
-  });
+  const AppSelectorDialog({super.key, required this.selectedPackages});
 
   @override
   ConsumerState<AppSelectorDialog> createState() => _AppSelectorDialogState();
 }
 
 class _AppSelectorDialogState extends ConsumerState<AppSelectorDialog> {
-  List<AppInfo> _apps = [];
+  List<InstalledApp> _apps = [];
   Set<String> _selected = {};
   bool _isLoading = true;
   String _searchQuery = '';
@@ -31,8 +27,7 @@ class _AppSelectorDialogState extends ConsumerState<AppSelectorDialog> {
   Future<void> _loadApps() async {
     setState(() => _isLoading = true);
     try {
-      final repo = ref.read(notificationRepoProvider);
-      final apps = await repo.getAllApps();
+      final apps = await AppListService.getInstalledApps();
       setState(() {
         _apps = apps;
         _isLoading = false;
@@ -43,9 +38,9 @@ class _AppSelectorDialogState extends ConsumerState<AppSelectorDialog> {
     }
   }
 
-  List<AppInfo> get _filteredApps {
+  List<InstalledApp> get _filteredApps {
     if (_searchQuery.isEmpty) return _apps;
-    
+
     final query = _searchQuery.toLowerCase();
     return _apps.where((app) {
       return app.appLabel.toLowerCase().contains(query) ||
@@ -108,47 +103,41 @@ class _AppSelectorDialogState extends ConsumerState<AppSelectorDialog> {
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : _filteredApps.isEmpty
-                      ? Center(
-                          child: Text(
-                            _searchQuery.isEmpty
-                                ? '알림을 보낸 앱이 없습니다'
-                                : '검색 결과가 없습니다',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge
-                                ?.copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurface
-                                      .withOpacity(0.6),
-                                ),
-                          ),
-                        )
-                      : ListView.builder(
-                          itemCount: _filteredApps.length,
-                          itemBuilder: (context, index) {
-                            final app = _filteredApps[index];
-                            final isSelected = _selected.contains(app.packageName);
-                            
-                            return CheckboxListTile(
-                              title: Text(app.appLabel),
-                              subtitle: Text(
-                                app.packageName,
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                              value: isSelected,
-                              onChanged: (checked) {
-                                setState(() {
-                                  if (checked == true) {
-                                    _selected.add(app.packageName);
-                                  } else {
-                                    _selected.remove(app.packageName);
-                                  }
-                                });
-                              },
-                            );
-                          },
+                  ? Center(
+                      child: Text(
+                        _searchQuery.isEmpty ? '설치된 앱이 없습니다' : '검색 결과가 없습니다',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.6),
                         ),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: _filteredApps.length,
+                      itemBuilder: (context, index) {
+                        final app = _filteredApps[index];
+                        final isSelected = _selected.contains(app.packageName);
+
+                        return CheckboxListTile(
+                          title: Text(app.appLabel),
+                          subtitle: Text(
+                            app.packageName,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          value: isSelected,
+                          onChanged: (checked) {
+                            setState(() {
+                              if (checked == true) {
+                                _selected.add(app.packageName);
+                              } else {
+                                _selected.remove(app.packageName);
+                              }
+                            });
+                          },
+                        );
+                      },
+                    ),
             ),
             const Divider(height: 1),
             Padding(
