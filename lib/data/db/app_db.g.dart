@@ -1170,6 +1170,731 @@ class StudyItemsCompanion extends UpdateCompanion<StudyItem> {
   }
 }
 
+class CustomCategories extends Table
+    with TableInfo<CustomCategories, CustomCategory> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  CustomCategories(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT',
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _iconCodePointMeta = const VerificationMeta(
+    'iconCodePoint',
+  );
+  late final GeneratedColumn<int> iconCodePoint = GeneratedColumn<int>(
+    'icon_code_point',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _colorValueMeta = const VerificationMeta(
+    'colorValue',
+  );
+  late final GeneratedColumn<int> colorValue = GeneratedColumn<int>(
+    'color_value',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _isActiveMeta = const VerificationMeta(
+    'isActive',
+  );
+  late final GeneratedColumn<bool> isActive = GeneratedColumn<bool>(
+    'is_active',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT TRUE',
+    defaultValue: const CustomExpression('TRUE'),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    iconCodePoint,
+    colorValue,
+    createdAt,
+    isActive,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'custom_categories';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CustomCategory> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('icon_code_point')) {
+      context.handle(
+        _iconCodePointMeta,
+        iconCodePoint.isAcceptableOrUnknown(
+          data['icon_code_point']!,
+          _iconCodePointMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_iconCodePointMeta);
+    }
+    if (data.containsKey('color_value')) {
+      context.handle(
+        _colorValueMeta,
+        colorValue.isAcceptableOrUnknown(data['color_value']!, _colorValueMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_colorValueMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('is_active')) {
+      context.handle(
+        _isActiveMeta,
+        isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CustomCategory map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CustomCategory(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      iconCodePoint: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}icon_code_point'],
+      )!,
+      colorValue: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}color_value'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      isActive: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_active'],
+      )!,
+    );
+  }
+
+  @override
+  CustomCategories createAlias(String alias) {
+    return CustomCategories(attachedDatabase, alias);
+  }
+
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class CustomCategory extends DataClass implements Insertable<CustomCategory> {
+  final int id;
+  final String name;
+  final int iconCodePoint;
+  final int colorValue;
+  final int createdAt;
+  final bool isActive;
+  const CustomCategory({
+    required this.id,
+    required this.name,
+    required this.iconCodePoint,
+    required this.colorValue,
+    required this.createdAt,
+    required this.isActive,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    map['icon_code_point'] = Variable<int>(iconCodePoint);
+    map['color_value'] = Variable<int>(colorValue);
+    map['created_at'] = Variable<int>(createdAt);
+    map['is_active'] = Variable<bool>(isActive);
+    return map;
+  }
+
+  CustomCategoriesCompanion toCompanion(bool nullToAbsent) {
+    return CustomCategoriesCompanion(
+      id: Value(id),
+      name: Value(name),
+      iconCodePoint: Value(iconCodePoint),
+      colorValue: Value(colorValue),
+      createdAt: Value(createdAt),
+      isActive: Value(isActive),
+    );
+  }
+
+  factory CustomCategory.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CustomCategory(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      iconCodePoint: serializer.fromJson<int>(json['icon_code_point']),
+      colorValue: serializer.fromJson<int>(json['color_value']),
+      createdAt: serializer.fromJson<int>(json['created_at']),
+      isActive: serializer.fromJson<bool>(json['is_active']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'icon_code_point': serializer.toJson<int>(iconCodePoint),
+      'color_value': serializer.toJson<int>(colorValue),
+      'created_at': serializer.toJson<int>(createdAt),
+      'is_active': serializer.toJson<bool>(isActive),
+    };
+  }
+
+  CustomCategory copyWith({
+    int? id,
+    String? name,
+    int? iconCodePoint,
+    int? colorValue,
+    int? createdAt,
+    bool? isActive,
+  }) => CustomCategory(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    iconCodePoint: iconCodePoint ?? this.iconCodePoint,
+    colorValue: colorValue ?? this.colorValue,
+    createdAt: createdAt ?? this.createdAt,
+    isActive: isActive ?? this.isActive,
+  );
+  CustomCategory copyWithCompanion(CustomCategoriesCompanion data) {
+    return CustomCategory(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      iconCodePoint: data.iconCodePoint.present
+          ? data.iconCodePoint.value
+          : this.iconCodePoint,
+      colorValue: data.colorValue.present
+          ? data.colorValue.value
+          : this.colorValue,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      isActive: data.isActive.present ? data.isActive.value : this.isActive,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CustomCategory(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('iconCodePoint: $iconCodePoint, ')
+          ..write('colorValue: $colorValue, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('isActive: $isActive')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, name, iconCodePoint, colorValue, createdAt, isActive);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CustomCategory &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.iconCodePoint == this.iconCodePoint &&
+          other.colorValue == this.colorValue &&
+          other.createdAt == this.createdAt &&
+          other.isActive == this.isActive);
+}
+
+class CustomCategoriesCompanion extends UpdateCompanion<CustomCategory> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<int> iconCodePoint;
+  final Value<int> colorValue;
+  final Value<int> createdAt;
+  final Value<bool> isActive;
+  const CustomCategoriesCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.iconCodePoint = const Value.absent(),
+    this.colorValue = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.isActive = const Value.absent(),
+  });
+  CustomCategoriesCompanion.insert({
+    this.id = const Value.absent(),
+    required String name,
+    required int iconCodePoint,
+    required int colorValue,
+    required int createdAt,
+    this.isActive = const Value.absent(),
+  }) : name = Value(name),
+       iconCodePoint = Value(iconCodePoint),
+       colorValue = Value(colorValue),
+       createdAt = Value(createdAt);
+  static Insertable<CustomCategory> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<int>? iconCodePoint,
+    Expression<int>? colorValue,
+    Expression<int>? createdAt,
+    Expression<bool>? isActive,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (iconCodePoint != null) 'icon_code_point': iconCodePoint,
+      if (colorValue != null) 'color_value': colorValue,
+      if (createdAt != null) 'created_at': createdAt,
+      if (isActive != null) 'is_active': isActive,
+    });
+  }
+
+  CustomCategoriesCompanion copyWith({
+    Value<int>? id,
+    Value<String>? name,
+    Value<int>? iconCodePoint,
+    Value<int>? colorValue,
+    Value<int>? createdAt,
+    Value<bool>? isActive,
+  }) {
+    return CustomCategoriesCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      iconCodePoint: iconCodePoint ?? this.iconCodePoint,
+      colorValue: colorValue ?? this.colorValue,
+      createdAt: createdAt ?? this.createdAt,
+      isActive: isActive ?? this.isActive,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (iconCodePoint.present) {
+      map['icon_code_point'] = Variable<int>(iconCodePoint.value);
+    }
+    if (colorValue.present) {
+      map['color_value'] = Variable<int>(colorValue.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (isActive.present) {
+      map['is_active'] = Variable<bool>(isActive.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CustomCategoriesCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('iconCodePoint: $iconCodePoint, ')
+          ..write('colorValue: $colorValue, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('isActive: $isActive')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class CategoryAppMappings extends Table
+    with TableInfo<CategoryAppMappings, CategoryAppMapping> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  CategoryAppMappings(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT',
+  );
+  static const VerificationMeta _categoryIdMeta = const VerificationMeta(
+    'categoryId',
+  );
+  late final GeneratedColumn<int> categoryId = GeneratedColumn<int>(
+    'category_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints:
+        'NOT NULL REFERENCES custom_categories(id)ON DELETE CASCADE',
+  );
+  static const VerificationMeta _packageNameMeta = const VerificationMeta(
+    'packageName',
+  );
+  late final GeneratedColumn<String> packageName = GeneratedColumn<String>(
+    'package_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    categoryId,
+    packageName,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'category_app_mappings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CategoryAppMapping> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('category_id')) {
+      context.handle(
+        _categoryIdMeta,
+        categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_categoryIdMeta);
+    }
+    if (data.containsKey('package_name')) {
+      context.handle(
+        _packageNameMeta,
+        packageName.isAcceptableOrUnknown(
+          data['package_name']!,
+          _packageNameMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_packageNameMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {categoryId, packageName},
+  ];
+  @override
+  CategoryAppMapping map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CategoryAppMapping(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      categoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}category_id'],
+      )!,
+      packageName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}package_name'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  CategoryAppMappings createAlias(String alias) {
+    return CategoryAppMappings(attachedDatabase, alias);
+  }
+
+  @override
+  List<String> get customConstraints => const [
+    'UNIQUE(category_id, package_name)',
+  ];
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class CategoryAppMapping extends DataClass
+    implements Insertable<CategoryAppMapping> {
+  final int id;
+  final int categoryId;
+  final String packageName;
+  final int createdAt;
+  const CategoryAppMapping({
+    required this.id,
+    required this.categoryId,
+    required this.packageName,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['category_id'] = Variable<int>(categoryId);
+    map['package_name'] = Variable<String>(packageName);
+    map['created_at'] = Variable<int>(createdAt);
+    return map;
+  }
+
+  CategoryAppMappingsCompanion toCompanion(bool nullToAbsent) {
+    return CategoryAppMappingsCompanion(
+      id: Value(id),
+      categoryId: Value(categoryId),
+      packageName: Value(packageName),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory CategoryAppMapping.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CategoryAppMapping(
+      id: serializer.fromJson<int>(json['id']),
+      categoryId: serializer.fromJson<int>(json['category_id']),
+      packageName: serializer.fromJson<String>(json['package_name']),
+      createdAt: serializer.fromJson<int>(json['created_at']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'category_id': serializer.toJson<int>(categoryId),
+      'package_name': serializer.toJson<String>(packageName),
+      'created_at': serializer.toJson<int>(createdAt),
+    };
+  }
+
+  CategoryAppMapping copyWith({
+    int? id,
+    int? categoryId,
+    String? packageName,
+    int? createdAt,
+  }) => CategoryAppMapping(
+    id: id ?? this.id,
+    categoryId: categoryId ?? this.categoryId,
+    packageName: packageName ?? this.packageName,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  CategoryAppMapping copyWithCompanion(CategoryAppMappingsCompanion data) {
+    return CategoryAppMapping(
+      id: data.id.present ? data.id.value : this.id,
+      categoryId: data.categoryId.present
+          ? data.categoryId.value
+          : this.categoryId,
+      packageName: data.packageName.present
+          ? data.packageName.value
+          : this.packageName,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CategoryAppMapping(')
+          ..write('id: $id, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('packageName: $packageName, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, categoryId, packageName, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CategoryAppMapping &&
+          other.id == this.id &&
+          other.categoryId == this.categoryId &&
+          other.packageName == this.packageName &&
+          other.createdAt == this.createdAt);
+}
+
+class CategoryAppMappingsCompanion extends UpdateCompanion<CategoryAppMapping> {
+  final Value<int> id;
+  final Value<int> categoryId;
+  final Value<String> packageName;
+  final Value<int> createdAt;
+  const CategoryAppMappingsCompanion({
+    this.id = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    this.packageName = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  });
+  CategoryAppMappingsCompanion.insert({
+    this.id = const Value.absent(),
+    required int categoryId,
+    required String packageName,
+    required int createdAt,
+  }) : categoryId = Value(categoryId),
+       packageName = Value(packageName),
+       createdAt = Value(createdAt);
+  static Insertable<CategoryAppMapping> custom({
+    Expression<int>? id,
+    Expression<int>? categoryId,
+    Expression<String>? packageName,
+    Expression<int>? createdAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (categoryId != null) 'category_id': categoryId,
+      if (packageName != null) 'package_name': packageName,
+      if (createdAt != null) 'created_at': createdAt,
+    });
+  }
+
+  CategoryAppMappingsCompanion copyWith({
+    Value<int>? id,
+    Value<int>? categoryId,
+    Value<String>? packageName,
+    Value<int>? createdAt,
+  }) {
+    return CategoryAppMappingsCompanion(
+      id: id ?? this.id,
+      categoryId: categoryId ?? this.categoryId,
+      packageName: packageName ?? this.packageName,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (categoryId.present) {
+      map['category_id'] = Variable<int>(categoryId.value);
+    }
+    if (packageName.present) {
+      map['package_name'] = Variable<String>(packageName.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CategoryAppMappingsCompanion(')
+          ..write('id: $id, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('packageName: $packageName, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1177,6 +1902,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     this,
   );
   late final StudyItems studyItems = StudyItems(this);
+  late final CustomCategories customCategories = CustomCategories(this);
+  late final CategoryAppMappings categoryAppMappings = CategoryAppMappings(
+    this,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1184,7 +1913,19 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     notificationEntries,
     studyItems,
+    customCategories,
+    categoryAppMappings,
   ];
+  @override
+  StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'custom_categories',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('category_app_mappings', kind: UpdateKind.delete)],
+    ),
+  ]);
 }
 
 typedef $NotificationEntriesCreateCompanionBuilder =
@@ -1987,6 +2728,636 @@ typedef $StudyItemsProcessedTableManager =
       StudyItem,
       PrefetchHooks Function({bool sourceNotificationId})
     >;
+typedef $CustomCategoriesCreateCompanionBuilder =
+    CustomCategoriesCompanion Function({
+      Value<int> id,
+      required String name,
+      required int iconCodePoint,
+      required int colorValue,
+      required int createdAt,
+      Value<bool> isActive,
+    });
+typedef $CustomCategoriesUpdateCompanionBuilder =
+    CustomCategoriesCompanion Function({
+      Value<int> id,
+      Value<String> name,
+      Value<int> iconCodePoint,
+      Value<int> colorValue,
+      Value<int> createdAt,
+      Value<bool> isActive,
+    });
+
+final class $CustomCategoriesReferences
+    extends BaseReferences<_$AppDatabase, CustomCategories, CustomCategory> {
+  $CustomCategoriesReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<CategoryAppMappings, List<CategoryAppMapping>>
+  _categoryAppMappingsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.categoryAppMappings,
+        aliasName: $_aliasNameGenerator(
+          db.customCategories.id,
+          db.categoryAppMappings.categoryId,
+        ),
+      );
+
+  $CategoryAppMappingsProcessedTableManager get categoryAppMappingsRefs {
+    final manager = $CategoryAppMappingsTableManager(
+      $_db,
+      $_db.categoryAppMappings,
+    ).filter((f) => f.categoryId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _categoryAppMappingsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $CustomCategoriesFilterComposer
+    extends Composer<_$AppDatabase, CustomCategories> {
+  $CustomCategoriesFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get iconCodePoint => $composableBuilder(
+    column: $table.iconCodePoint,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get colorValue => $composableBuilder(
+    column: $table.colorValue,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> categoryAppMappingsRefs(
+    Expression<bool> Function($CategoryAppMappingsFilterComposer f) f,
+  ) {
+    final $CategoryAppMappingsFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.categoryAppMappings,
+      getReferencedColumn: (t) => t.categoryId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $CategoryAppMappingsFilterComposer(
+            $db: $db,
+            $table: $db.categoryAppMappings,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $CustomCategoriesOrderingComposer
+    extends Composer<_$AppDatabase, CustomCategories> {
+  $CustomCategoriesOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get iconCodePoint => $composableBuilder(
+    column: $table.iconCodePoint,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get colorValue => $composableBuilder(
+    column: $table.colorValue,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $CustomCategoriesAnnotationComposer
+    extends Composer<_$AppDatabase, CustomCategories> {
+  $CustomCategoriesAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<int> get iconCodePoint => $composableBuilder(
+    column: $table.iconCodePoint,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get colorValue => $composableBuilder(
+    column: $table.colorValue,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get isActive =>
+      $composableBuilder(column: $table.isActive, builder: (column) => column);
+
+  Expression<T> categoryAppMappingsRefs<T extends Object>(
+    Expression<T> Function($CategoryAppMappingsAnnotationComposer a) f,
+  ) {
+    final $CategoryAppMappingsAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.categoryAppMappings,
+      getReferencedColumn: (t) => t.categoryId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $CategoryAppMappingsAnnotationComposer(
+            $db: $db,
+            $table: $db.categoryAppMappings,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $CustomCategoriesTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          CustomCategories,
+          CustomCategory,
+          $CustomCategoriesFilterComposer,
+          $CustomCategoriesOrderingComposer,
+          $CustomCategoriesAnnotationComposer,
+          $CustomCategoriesCreateCompanionBuilder,
+          $CustomCategoriesUpdateCompanionBuilder,
+          (CustomCategory, $CustomCategoriesReferences),
+          CustomCategory,
+          PrefetchHooks Function({bool categoryAppMappingsRefs})
+        > {
+  $CustomCategoriesTableManager(_$AppDatabase db, CustomCategories table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $CustomCategoriesFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $CustomCategoriesOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $CustomCategoriesAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<int> iconCodePoint = const Value.absent(),
+                Value<int> colorValue = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
+              }) => CustomCategoriesCompanion(
+                id: id,
+                name: name,
+                iconCodePoint: iconCodePoint,
+                colorValue: colorValue,
+                createdAt: createdAt,
+                isActive: isActive,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String name,
+                required int iconCodePoint,
+                required int colorValue,
+                required int createdAt,
+                Value<bool> isActive = const Value.absent(),
+              }) => CustomCategoriesCompanion.insert(
+                id: id,
+                name: name,
+                iconCodePoint: iconCodePoint,
+                colorValue: colorValue,
+                createdAt: createdAt,
+                isActive: isActive,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $CustomCategoriesReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({categoryAppMappingsRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (categoryAppMappingsRefs) db.categoryAppMappings,
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (categoryAppMappingsRefs)
+                    await $_getPrefetchedData<
+                      CustomCategory,
+                      CustomCategories,
+                      CategoryAppMapping
+                    >(
+                      currentTable: table,
+                      referencedTable: $CustomCategoriesReferences
+                          ._categoryAppMappingsRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $CustomCategoriesReferences(
+                            db,
+                            table,
+                            p0,
+                          ).categoryAppMappingsRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.categoryId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $CustomCategoriesProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      CustomCategories,
+      CustomCategory,
+      $CustomCategoriesFilterComposer,
+      $CustomCategoriesOrderingComposer,
+      $CustomCategoriesAnnotationComposer,
+      $CustomCategoriesCreateCompanionBuilder,
+      $CustomCategoriesUpdateCompanionBuilder,
+      (CustomCategory, $CustomCategoriesReferences),
+      CustomCategory,
+      PrefetchHooks Function({bool categoryAppMappingsRefs})
+    >;
+typedef $CategoryAppMappingsCreateCompanionBuilder =
+    CategoryAppMappingsCompanion Function({
+      Value<int> id,
+      required int categoryId,
+      required String packageName,
+      required int createdAt,
+    });
+typedef $CategoryAppMappingsUpdateCompanionBuilder =
+    CategoryAppMappingsCompanion Function({
+      Value<int> id,
+      Value<int> categoryId,
+      Value<String> packageName,
+      Value<int> createdAt,
+    });
+
+final class $CategoryAppMappingsReferences
+    extends
+        BaseReferences<_$AppDatabase, CategoryAppMappings, CategoryAppMapping> {
+  $CategoryAppMappingsReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static CustomCategories _categoryIdTable(_$AppDatabase db) =>
+      db.customCategories.createAlias(
+        $_aliasNameGenerator(
+          db.categoryAppMappings.categoryId,
+          db.customCategories.id,
+        ),
+      );
+
+  $CustomCategoriesProcessedTableManager get categoryId {
+    final $_column = $_itemColumn<int>('category_id')!;
+
+    final manager = $CustomCategoriesTableManager(
+      $_db,
+      $_db.customCategories,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_categoryIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $CategoryAppMappingsFilterComposer
+    extends Composer<_$AppDatabase, CategoryAppMappings> {
+  $CategoryAppMappingsFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get packageName => $composableBuilder(
+    column: $table.packageName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $CustomCategoriesFilterComposer get categoryId {
+    final $CustomCategoriesFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.customCategories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $CustomCategoriesFilterComposer(
+            $db: $db,
+            $table: $db.customCategories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $CategoryAppMappingsOrderingComposer
+    extends Composer<_$AppDatabase, CategoryAppMappings> {
+  $CategoryAppMappingsOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get packageName => $composableBuilder(
+    column: $table.packageName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $CustomCategoriesOrderingComposer get categoryId {
+    final $CustomCategoriesOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.customCategories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $CustomCategoriesOrderingComposer(
+            $db: $db,
+            $table: $db.customCategories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $CategoryAppMappingsAnnotationComposer
+    extends Composer<_$AppDatabase, CategoryAppMappings> {
+  $CategoryAppMappingsAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get packageName => $composableBuilder(
+    column: $table.packageName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  $CustomCategoriesAnnotationComposer get categoryId {
+    final $CustomCategoriesAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.customCategories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $CustomCategoriesAnnotationComposer(
+            $db: $db,
+            $table: $db.customCategories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $CategoryAppMappingsTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          CategoryAppMappings,
+          CategoryAppMapping,
+          $CategoryAppMappingsFilterComposer,
+          $CategoryAppMappingsOrderingComposer,
+          $CategoryAppMappingsAnnotationComposer,
+          $CategoryAppMappingsCreateCompanionBuilder,
+          $CategoryAppMappingsUpdateCompanionBuilder,
+          (CategoryAppMapping, $CategoryAppMappingsReferences),
+          CategoryAppMapping,
+          PrefetchHooks Function({bool categoryId})
+        > {
+  $CategoryAppMappingsTableManager(_$AppDatabase db, CategoryAppMappings table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $CategoryAppMappingsFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $CategoryAppMappingsOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $CategoryAppMappingsAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> categoryId = const Value.absent(),
+                Value<String> packageName = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+              }) => CategoryAppMappingsCompanion(
+                id: id,
+                categoryId: categoryId,
+                packageName: packageName,
+                createdAt: createdAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int categoryId,
+                required String packageName,
+                required int createdAt,
+              }) => CategoryAppMappingsCompanion.insert(
+                id: id,
+                categoryId: categoryId,
+                packageName: packageName,
+                createdAt: createdAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $CategoryAppMappingsReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({categoryId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (categoryId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.categoryId,
+                                referencedTable: $CategoryAppMappingsReferences
+                                    ._categoryIdTable(db),
+                                referencedColumn: $CategoryAppMappingsReferences
+                                    ._categoryIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $CategoryAppMappingsProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      CategoryAppMappings,
+      CategoryAppMapping,
+      $CategoryAppMappingsFilterComposer,
+      $CategoryAppMappingsOrderingComposer,
+      $CategoryAppMappingsAnnotationComposer,
+      $CategoryAppMappingsCreateCompanionBuilder,
+      $CategoryAppMappingsUpdateCompanionBuilder,
+      (CategoryAppMapping, $CategoryAppMappingsReferences),
+      CategoryAppMapping,
+      PrefetchHooks Function({bool categoryId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -1995,4 +3366,8 @@ class $AppDatabaseManager {
       $NotificationEntriesTableManager(_db, _db.notificationEntries);
   $StudyItemsTableManager get studyItems =>
       $StudyItemsTableManager(_db, _db.studyItems);
+  $CustomCategoriesTableManager get customCategories =>
+      $CustomCategoriesTableManager(_db, _db.customCategories);
+  $CategoryAppMappingsTableManager get categoryAppMappings =>
+      $CategoryAppMappingsTableManager(_db, _db.categoryAppMappings);
 }

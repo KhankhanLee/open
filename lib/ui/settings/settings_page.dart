@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yeolda/core/providers.dart';
 import 'package:yeolda/services/notification_listener.dart';
-import 'package:yeolda/ui/widgets/app_bottom_navigation_bar.dart';
+import 'package:yeolda/ui/categories/custom_categories_page.dart';
 import 'package:yeolda/ui/debug/debug_notification_page.dart';
+import 'package:yeolda/ui/widgets/app_bottom_navigation_bar.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -16,6 +17,10 @@ class SettingsPage extends ConsumerWidget {
         children: [
           _buildSectionHeader('알림 권한'),
           _buildPermissionTile(context),
+          const Divider(),
+
+          _buildSectionHeader('카테고리'),
+          _buildCustomCategoriesTile(context),
           const Divider(),
 
           _buildSectionHeader('데이터 관리'),
@@ -77,6 +82,23 @@ class SettingsPage extends ConsumerWidget {
                   },
                   child: const Text('설정'),
                 ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCustomCategoriesTile(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.category),
+      title: const Text('커스텀 카테고리 관리'),
+      subtitle: const Text('나만의 카테고리 추가 및 관리'),
+      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const CustomCategoriesPage(),
+          ),
         );
       },
     );

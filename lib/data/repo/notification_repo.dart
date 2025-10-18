@@ -7,14 +7,14 @@ import 'package:yeolda/services/notification_listener.dart';
 
 class NotificationRepo {
   final AppDatabase _db;
-  final ClassifierService _classifier = ClassifierService();
+  final ClassifierService _classifier;
 
-  NotificationRepo(this._db);
+  NotificationRepo(this._db, this._classifier);
 
   /// 수신한 알림을 분류하고 DB에 저장
   Future<bool> insertNotification(IncomingNotification incoming) async {
     // 분류
-    final classification = _classifier.classify(
+    final classification = await _classifier.classify(
       packageName: incoming.packageName,
       title: incoming.title,
       content: incoming.text,
@@ -240,10 +240,35 @@ class NotificationRepo {
 
   /// 특정 기간 이전 알림 삭제
   Future<void> deleteOlderThan(DateTime date) async {
-    await (_db.delete(_db.notificationEntries)..where(
-          (t) => t.postedAt.isSmallerThanValue(date.millisecondsSinceEpoch),
-        ))
+    await (_db.delete(_db.notificationEntries)
+          ..where(
+            (t) => t.postedAt.isSmallerThanValue(date.millisecondsSinceEpoch),
+          ))
         .go();
+  }
+
+  /// 모든 고유 패키지명과 앱 라벨 가져오기
+  Future<List<AppInfo>> getAllApps() async {
+    final result = await (_db.selectOnly(_db.notificationEntries)
+          ..addColumns([
+            _db.notificationEntries.packageName,
+            _db.notificationEntries.appLabel,
+          ])
+          ..groupBy([
+            _db.notificationEntries.packageName,
+            _db.notificationEntries.appLabel,
+          ])
+          ..orderBy([
+            OrderingTerm(expression: _db.notificationEntries.appLabel),
+          ]))
+        .get();
+
+    return result.map((row) {
+      return AppInfo(
+        packageName: row.read(_db.notificationEntries.packageName)!,
+        appLabel: row.read(_db.notificationEntries.appLabel)!,
+      );
+    }).toList();
   }
 }
 
@@ -256,5 +281,15 @@ class AppStat {
     required this.packageName,
     required this.appLabel,
     required this.count,
+  });
+}
+
+class AppInfo {
+  final String packageName;
+  final String appLabel;
+
+  AppInfo({
+    required this.packageName,
+    required this.appLabel,
   });
 }

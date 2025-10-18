@@ -1,22 +1,39 @@
 import 'package:yeolda/data/models/category.dart';
+import 'package:yeolda/data/models/custom_category.dart';
+import 'package:yeolda/data/repo/custom_category_repo.dart';
 
 class ClassifierService {
+  final CustomCategoryRepo _customCategoryRepo;
+
+  ClassifierService(this._customCategoryRepo);
+
   /// 알림을 분류하고 중요도를 판단합니다
-  ClassificationResult classify({
+  Future<ClassificationResult> classify({
     required String packageName,
     required String title,
     required String content,
     String? category,
-  }) {
+  }) async {
     final lowerTitle = title.toLowerCase();
     final lowerContent = content.toLowerCase();
     final combinedText = '$lowerTitle $lowerContent';
 
-    // 1차: 패키지명 기반 분류
-    AppCategory? assignedCategory = _classifyByPackage(packageName);
+    // 0차: 커스텀 카테고리 확인 (최우선)
+    final customCategory = await _customCategoryRepo.findCategoryByPackage(
+      packageName,
+    );
+    AppCategory? assignedCategory;
 
-    // 2차: 키워드 기반 분류 (패키지 분류가 없을 경우)
-    assignedCategory ??= _classifyByKeyword(combinedText);
+    if (customCategory != null) {
+      // 커스텀 카테고리는 'other' 타입으로 분류
+      assignedCategory = AppCategory.other;
+    } else {
+      // 1차: 패키지명 기반 분류
+      assignedCategory = _classifyByPackage(packageName);
+
+      // 2차: 키워드 기반 분류 (패키지 분류가 없을 경우)
+      assignedCategory ??= _classifyByKeyword(combinedText);
+    }
 
     // 3차: 중요도 판단
     final isImportant = _determineImportance(
@@ -28,21 +45,46 @@ class ClassifierService {
     return ClassificationResult(
       category: assignedCategory,
       isImportant: isImportant,
+      customCategory: customCategory,
     );
   }
 
   AppCategory? _classifyByPackage(String packageName) {
     final lower = packageName.toLowerCase();
-
+    // KakaoTalk
+    if (lower.contains('kakaotalk')) {
+      return AppCategory.kakaotalk;
+    }
+    // Instagram
+    if (lower.contains('instagram')) {
+      return AppCategory.instagram;
+    }
+    // Telegram
+    if (lower.contains('telegram')) {
+      return AppCategory.telegram;
+    }
+    // Discord
+    if (lower.contains('discord')) {
+      return AppCategory.discord;
+    }
+    // Slack
+    if (lower.contains('slack')) {
+      return AppCategory.slack;
+    }
+    // Line
+    if (lower.contains('line')) {
+      return AppCategory.line;
+    }
+    // Wechat 
+    if (lower.contains('wechat')) {
+      return AppCategory.wechat;
+    }
+    // Whatsapp
+    if (lower.contains('whatsapp')) {
+      return AppCategory.whatsapp;
+    }
     // Messenger
-    if (lower.contains('kakao.talk') ||
-        lower.contains('telegram') ||
-        lower.contains('discord') ||
-        lower.contains('slack') ||
-        lower.contains('line') ||
-        lower.contains('wechat') ||
-        lower.contains('whatsapp') ||
-        lower.contains('messenger')) {
+    if (lower.contains('messenger')) {
       return AppCategory.messenger;
     }
 
@@ -277,6 +319,11 @@ class ClassifierService {
 class ClassificationResult {
   final AppCategory category;
   final bool isImportant;
+  final CustomCategory? customCategory;
 
-  ClassificationResult({required this.category, required this.isImportant});
+  ClassificationResult({
+    required this.category,
+    required this.isImportant,
+    this.customCategory,
+  });
 }
