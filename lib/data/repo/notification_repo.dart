@@ -24,6 +24,10 @@ class NotificationRepo {
     // 해시 생성
     final hash = incoming.generateHash();
 
+    // 커스텀 카테고리가 있으면 그 이름을, 없으면 enum 이름을 사용
+    final categoryName =
+        classification.customCategory?.name ?? classification.category.name;
+
     try {
       await _db
           .into(_db.notificationEntries)
@@ -36,7 +40,7 @@ class NotificationRepo {
               content: Value(incoming.text),
               channelId: Value(incoming.channelId),
               category: Value(incoming.category),
-              assignedCategory: classification.category.name,
+              assignedCategory: categoryName,
               isImportant: Value(classification.isImportant),
               isRead: const Value(false),
               hash: hash,
@@ -141,7 +145,7 @@ class NotificationRepo {
   Future<Map<int, int>> getStatsByHour() async {
     final query = '''
       SELECT 
-        (posted_at / 3600000) % 24 as hour,
+        CAST(strftime('%H', posted_at / 1000, 'unixepoch', 'localtime') AS INTEGER) as hour,
         COUNT(*) as count
       FROM notification_entries
       GROUP BY hour
@@ -162,12 +166,14 @@ class NotificationRepo {
     return stats;
   }
 
-  /// 요일별 통계 (0=일요일, 6=토요일)
+  /// 요일별 통계 (0=월요일, 6=일요일)
   Future<Map<int, int>> getStatsByWeekday() async {
     // SQLite의 strftime을 사용
+    // %w: 0=일요일, 1=월요일, ..., 6=토요일
+    // 변환: (weekday + 6) % 7 = 0=월요일, 1=화요일, ..., 6=일요일
     final query = '''
       SELECT 
-        CAST(strftime('%w', posted_at / 1000, 'unixepoch') AS INTEGER) as weekday,
+        (CAST(strftime('%w', posted_at / 1000, 'unixepoch', 'localtime') AS INTEGER) + 6) % 7 as weekday,
         COUNT(*) as count
       FROM notification_entries
       GROUP BY weekday
@@ -269,6 +275,97 @@ class NotificationRepo {
         appLabel: row.read(_db.notificationEntries.appLabel)!,
       );
     }).toList();
+  }
+
+  /// 모든 알림을 재분류 (커스텀 카테고리 변경 시 호출)
+  Future<int> reclassifyAllNotifications() async {
+    debugPrint('모든 알림 재분류 시작...');
+
+    // 모든 알림 가져오기
+    final allNotifications = await (_db.select(
+      _db.notificationEntries,
+    )..orderBy([(t) => OrderingTerm(expression: t.id)])).get();
+
+    int updatedCount = 0;
+
+    for (final notification in allNotifications) {
+      try {
+        // 재분류
+        final classification = await _classifier.classify(
+          packageName: notification.packageName,
+          title: notification.title,
+          content: notification.content ?? '',
+          category: notification.category,
+        );
+
+        // 새로운 카테고리명
+        final newCategoryName =
+            classification.customCategory?.name ?? classification.category.name;
+
+        // 카테고리가 변경된 경우에만 업데이트
+        if (newCategoryName != notification.assignedCategory) {
+          await (_db.update(
+            _db.notificationEntries,
+          )..where((t) => t.id.equals(notification.id))).write(
+            NotificationEntriesCompanion(
+              assignedCategory: Value(newCategoryName),
+            ),
+          );
+
+          updatedCount++;
+          debugPrint(
+            '재분류: ${notification.appLabel} (${notification.assignedCategory} → $newCategoryName)',
+          );
+        }
+      } catch (e) {
+        debugPrint('재분류 실패: ${notification.appLabel} - $e');
+      }
+    }
+
+    debugPrint('재분류 완료: $updatedCount/${allNotifications.length}개 업데이트됨');
+    return updatedCount;
+  }
+
+  /// 특정 패키지의 알림만 재분류
+  Future<int> reclassifyByPackage(String packageName) async {
+    debugPrint('패키지별 재분류 시작: $packageName');
+
+    final notifications = await (_db.select(
+      _db.notificationEntries,
+    )..where((t) => t.packageName.equals(packageName))).get();
+
+    int updatedCount = 0;
+
+    for (final notification in notifications) {
+      try {
+        final classification = await _classifier.classify(
+          packageName: notification.packageName,
+          title: notification.title,
+          content: notification.content ?? '',
+          category: notification.category,
+        );
+
+        final newCategoryName =
+            classification.customCategory?.name ?? classification.category.name;
+
+        if (newCategoryName != notification.assignedCategory) {
+          await (_db.update(
+            _db.notificationEntries,
+          )..where((t) => t.id.equals(notification.id))).write(
+            NotificationEntriesCompanion(
+              assignedCategory: Value(newCategoryName),
+            ),
+          );
+
+          updatedCount++;
+        }
+      } catch (e) {
+        debugPrint('재분류 실패: $e');
+      }
+    }
+
+    debugPrint('재분류 완료: $updatedCount/${notifications.length}개 업데이트됨');
+    return updatedCount;
   }
 }
 

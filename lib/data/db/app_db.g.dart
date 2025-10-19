@@ -1895,6 +1895,671 @@ class CategoryAppMappingsCompanion extends UpdateCompanion<CategoryAppMapping> {
   }
 }
 
+class Rewards extends Table with TableInfo<Rewards, Reward> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  Rewards(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL PRIMARY KEY AUTOINCREMENT',
+  );
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+    'type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _amountMeta = const VerificationMeta('amount');
+  late final GeneratedColumn<int> amount = GeneratedColumn<int>(
+    'amount',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
+  );
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+    'description',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
+  static const VerificationMeta _earnedAtMeta = const VerificationMeta(
+    'earnedAt',
+  );
+  late final GeneratedColumn<int> earnedAt = GeneratedColumn<int>(
+    'earned_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    type,
+    amount,
+    description,
+    earnedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'rewards';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Reward> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+        _typeMeta,
+        type.isAcceptableOrUnknown(data['type']!, _typeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_typeMeta);
+    }
+    if (data.containsKey('amount')) {
+      context.handle(
+        _amountMeta,
+        amount.isAcceptableOrUnknown(data['amount']!, _amountMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_amountMeta);
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
+          _descriptionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('earned_at')) {
+      context.handle(
+        _earnedAtMeta,
+        earnedAt.isAcceptableOrUnknown(data['earned_at']!, _earnedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_earnedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Reward map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Reward(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      type: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}type'],
+      )!,
+      amount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount'],
+      )!,
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      ),
+      earnedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}earned_at'],
+      )!,
+    );
+  }
+
+  @override
+  Rewards createAlias(String alias) {
+    return Rewards(attachedDatabase, alias);
+  }
+
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class Reward extends DataClass implements Insertable<Reward> {
+  final int id;
+  final String type;
+  final int amount;
+  final String? description;
+  final int earnedAt;
+  const Reward({
+    required this.id,
+    required this.type,
+    required this.amount,
+    this.description,
+    required this.earnedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['type'] = Variable<String>(type);
+    map['amount'] = Variable<int>(amount);
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String>(description);
+    }
+    map['earned_at'] = Variable<int>(earnedAt);
+    return map;
+  }
+
+  RewardsCompanion toCompanion(bool nullToAbsent) {
+    return RewardsCompanion(
+      id: Value(id),
+      type: Value(type),
+      amount: Value(amount),
+      description: description == null && nullToAbsent
+          ? const Value.absent()
+          : Value(description),
+      earnedAt: Value(earnedAt),
+    );
+  }
+
+  factory Reward.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Reward(
+      id: serializer.fromJson<int>(json['id']),
+      type: serializer.fromJson<String>(json['type']),
+      amount: serializer.fromJson<int>(json['amount']),
+      description: serializer.fromJson<String?>(json['description']),
+      earnedAt: serializer.fromJson<int>(json['earned_at']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'type': serializer.toJson<String>(type),
+      'amount': serializer.toJson<int>(amount),
+      'description': serializer.toJson<String?>(description),
+      'earned_at': serializer.toJson<int>(earnedAt),
+    };
+  }
+
+  Reward copyWith({
+    int? id,
+    String? type,
+    int? amount,
+    Value<String?> description = const Value.absent(),
+    int? earnedAt,
+  }) => Reward(
+    id: id ?? this.id,
+    type: type ?? this.type,
+    amount: amount ?? this.amount,
+    description: description.present ? description.value : this.description,
+    earnedAt: earnedAt ?? this.earnedAt,
+  );
+  Reward copyWithCompanion(RewardsCompanion data) {
+    return Reward(
+      id: data.id.present ? data.id.value : this.id,
+      type: data.type.present ? data.type.value : this.type,
+      amount: data.amount.present ? data.amount.value : this.amount,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
+      earnedAt: data.earnedAt.present ? data.earnedAt.value : this.earnedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Reward(')
+          ..write('id: $id, ')
+          ..write('type: $type, ')
+          ..write('amount: $amount, ')
+          ..write('description: $description, ')
+          ..write('earnedAt: $earnedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, type, amount, description, earnedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Reward &&
+          other.id == this.id &&
+          other.type == this.type &&
+          other.amount == this.amount &&
+          other.description == this.description &&
+          other.earnedAt == this.earnedAt);
+}
+
+class RewardsCompanion extends UpdateCompanion<Reward> {
+  final Value<int> id;
+  final Value<String> type;
+  final Value<int> amount;
+  final Value<String?> description;
+  final Value<int> earnedAt;
+  const RewardsCompanion({
+    this.id = const Value.absent(),
+    this.type = const Value.absent(),
+    this.amount = const Value.absent(),
+    this.description = const Value.absent(),
+    this.earnedAt = const Value.absent(),
+  });
+  RewardsCompanion.insert({
+    this.id = const Value.absent(),
+    required String type,
+    required int amount,
+    this.description = const Value.absent(),
+    required int earnedAt,
+  }) : type = Value(type),
+       amount = Value(amount),
+       earnedAt = Value(earnedAt);
+  static Insertable<Reward> custom({
+    Expression<int>? id,
+    Expression<String>? type,
+    Expression<int>? amount,
+    Expression<String>? description,
+    Expression<int>? earnedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (type != null) 'type': type,
+      if (amount != null) 'amount': amount,
+      if (description != null) 'description': description,
+      if (earnedAt != null) 'earned_at': earnedAt,
+    });
+  }
+
+  RewardsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? type,
+    Value<int>? amount,
+    Value<String?>? description,
+    Value<int>? earnedAt,
+  }) {
+    return RewardsCompanion(
+      id: id ?? this.id,
+      type: type ?? this.type,
+      amount: amount ?? this.amount,
+      description: description ?? this.description,
+      earnedAt: earnedAt ?? this.earnedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
+    if (amount.present) {
+      map['amount'] = Variable<int>(amount.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (earnedAt.present) {
+      map['earned_at'] = Variable<int>(earnedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RewardsCompanion(')
+          ..write('id: $id, ')
+          ..write('type: $type, ')
+          ..write('amount: $amount, ')
+          ..write('description: $description, ')
+          ..write('earnedAt: $earnedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class UserBalance extends Table with TableInfo<UserBalance, UserBalanceData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  UserBalance(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL PRIMARY KEY DEFAULT 1',
+    defaultValue: const CustomExpression('1'),
+  );
+  static const VerificationMeta _totalPointsMeta = const VerificationMeta(
+    'totalPoints',
+  );
+  late final GeneratedColumn<int> totalPoints = GeneratedColumn<int>(
+    'total_points',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT 0',
+    defaultValue: const CustomExpression('0'),
+  );
+  static const VerificationMeta _usedPointsMeta = const VerificationMeta(
+    'usedPoints',
+  );
+  late final GeneratedColumn<int> usedPoints = GeneratedColumn<int>(
+    'used_points',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT 0',
+    defaultValue: const CustomExpression('0'),
+  );
+  static const VerificationMeta _lastUpdatedMeta = const VerificationMeta(
+    'lastUpdated',
+  );
+  late final GeneratedColumn<int> lastUpdated = GeneratedColumn<int>(
+    'last_updated',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    totalPoints,
+    usedPoints,
+    lastUpdated,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'user_balance';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<UserBalanceData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('total_points')) {
+      context.handle(
+        _totalPointsMeta,
+        totalPoints.isAcceptableOrUnknown(
+          data['total_points']!,
+          _totalPointsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('used_points')) {
+      context.handle(
+        _usedPointsMeta,
+        usedPoints.isAcceptableOrUnknown(data['used_points']!, _usedPointsMeta),
+      );
+    }
+    if (data.containsKey('last_updated')) {
+      context.handle(
+        _lastUpdatedMeta,
+        lastUpdated.isAcceptableOrUnknown(
+          data['last_updated']!,
+          _lastUpdatedMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_lastUpdatedMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  UserBalanceData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return UserBalanceData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      totalPoints: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_points'],
+      )!,
+      usedPoints: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}used_points'],
+      )!,
+      lastUpdated: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}last_updated'],
+      )!,
+    );
+  }
+
+  @override
+  UserBalance createAlias(String alias) {
+    return UserBalance(attachedDatabase, alias);
+  }
+
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class UserBalanceData extends DataClass implements Insertable<UserBalanceData> {
+  final int id;
+  final int totalPoints;
+  final int usedPoints;
+  final int lastUpdated;
+  const UserBalanceData({
+    required this.id,
+    required this.totalPoints,
+    required this.usedPoints,
+    required this.lastUpdated,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['total_points'] = Variable<int>(totalPoints);
+    map['used_points'] = Variable<int>(usedPoints);
+    map['last_updated'] = Variable<int>(lastUpdated);
+    return map;
+  }
+
+  UserBalanceCompanion toCompanion(bool nullToAbsent) {
+    return UserBalanceCompanion(
+      id: Value(id),
+      totalPoints: Value(totalPoints),
+      usedPoints: Value(usedPoints),
+      lastUpdated: Value(lastUpdated),
+    );
+  }
+
+  factory UserBalanceData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return UserBalanceData(
+      id: serializer.fromJson<int>(json['id']),
+      totalPoints: serializer.fromJson<int>(json['total_points']),
+      usedPoints: serializer.fromJson<int>(json['used_points']),
+      lastUpdated: serializer.fromJson<int>(json['last_updated']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'total_points': serializer.toJson<int>(totalPoints),
+      'used_points': serializer.toJson<int>(usedPoints),
+      'last_updated': serializer.toJson<int>(lastUpdated),
+    };
+  }
+
+  UserBalanceData copyWith({
+    int? id,
+    int? totalPoints,
+    int? usedPoints,
+    int? lastUpdated,
+  }) => UserBalanceData(
+    id: id ?? this.id,
+    totalPoints: totalPoints ?? this.totalPoints,
+    usedPoints: usedPoints ?? this.usedPoints,
+    lastUpdated: lastUpdated ?? this.lastUpdated,
+  );
+  UserBalanceData copyWithCompanion(UserBalanceCompanion data) {
+    return UserBalanceData(
+      id: data.id.present ? data.id.value : this.id,
+      totalPoints: data.totalPoints.present
+          ? data.totalPoints.value
+          : this.totalPoints,
+      usedPoints: data.usedPoints.present
+          ? data.usedPoints.value
+          : this.usedPoints,
+      lastUpdated: data.lastUpdated.present
+          ? data.lastUpdated.value
+          : this.lastUpdated,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UserBalanceData(')
+          ..write('id: $id, ')
+          ..write('totalPoints: $totalPoints, ')
+          ..write('usedPoints: $usedPoints, ')
+          ..write('lastUpdated: $lastUpdated')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, totalPoints, usedPoints, lastUpdated);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is UserBalanceData &&
+          other.id == this.id &&
+          other.totalPoints == this.totalPoints &&
+          other.usedPoints == this.usedPoints &&
+          other.lastUpdated == this.lastUpdated);
+}
+
+class UserBalanceCompanion extends UpdateCompanion<UserBalanceData> {
+  final Value<int> id;
+  final Value<int> totalPoints;
+  final Value<int> usedPoints;
+  final Value<int> lastUpdated;
+  const UserBalanceCompanion({
+    this.id = const Value.absent(),
+    this.totalPoints = const Value.absent(),
+    this.usedPoints = const Value.absent(),
+    this.lastUpdated = const Value.absent(),
+  });
+  UserBalanceCompanion.insert({
+    this.id = const Value.absent(),
+    this.totalPoints = const Value.absent(),
+    this.usedPoints = const Value.absent(),
+    required int lastUpdated,
+  }) : lastUpdated = Value(lastUpdated);
+  static Insertable<UserBalanceData> custom({
+    Expression<int>? id,
+    Expression<int>? totalPoints,
+    Expression<int>? usedPoints,
+    Expression<int>? lastUpdated,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (totalPoints != null) 'total_points': totalPoints,
+      if (usedPoints != null) 'used_points': usedPoints,
+      if (lastUpdated != null) 'last_updated': lastUpdated,
+    });
+  }
+
+  UserBalanceCompanion copyWith({
+    Value<int>? id,
+    Value<int>? totalPoints,
+    Value<int>? usedPoints,
+    Value<int>? lastUpdated,
+  }) {
+    return UserBalanceCompanion(
+      id: id ?? this.id,
+      totalPoints: totalPoints ?? this.totalPoints,
+      usedPoints: usedPoints ?? this.usedPoints,
+      lastUpdated: lastUpdated ?? this.lastUpdated,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (totalPoints.present) {
+      map['total_points'] = Variable<int>(totalPoints.value);
+    }
+    if (usedPoints.present) {
+      map['used_points'] = Variable<int>(usedPoints.value);
+    }
+    if (lastUpdated.present) {
+      map['last_updated'] = Variable<int>(lastUpdated.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UserBalanceCompanion(')
+          ..write('id: $id, ')
+          ..write('totalPoints: $totalPoints, ')
+          ..write('usedPoints: $usedPoints, ')
+          ..write('lastUpdated: $lastUpdated')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1906,6 +2571,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final CategoryAppMappings categoryAppMappings = CategoryAppMappings(
     this,
   );
+  late final Rewards rewards = Rewards(this);
+  late final UserBalance userBalance = UserBalance(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1915,6 +2582,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     studyItems,
     customCategories,
     categoryAppMappings,
+    rewards,
+    userBalance,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -3358,6 +4027,373 @@ typedef $CategoryAppMappingsProcessedTableManager =
       CategoryAppMapping,
       PrefetchHooks Function({bool categoryId})
     >;
+typedef $RewardsCreateCompanionBuilder =
+    RewardsCompanion Function({
+      Value<int> id,
+      required String type,
+      required int amount,
+      Value<String?> description,
+      required int earnedAt,
+    });
+typedef $RewardsUpdateCompanionBuilder =
+    RewardsCompanion Function({
+      Value<int> id,
+      Value<String> type,
+      Value<int> amount,
+      Value<String?> description,
+      Value<int> earnedAt,
+    });
+
+class $RewardsFilterComposer extends Composer<_$AppDatabase, Rewards> {
+  $RewardsFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get earnedAt => $composableBuilder(
+    column: $table.earnedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $RewardsOrderingComposer extends Composer<_$AppDatabase, Rewards> {
+  $RewardsOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get earnedAt => $composableBuilder(
+    column: $table.earnedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $RewardsAnnotationComposer extends Composer<_$AppDatabase, Rewards> {
+  $RewardsAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumn<int> get amount =>
+      $composableBuilder(column: $table.amount, builder: (column) => column);
+
+  GeneratedColumn<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get earnedAt =>
+      $composableBuilder(column: $table.earnedAt, builder: (column) => column);
+}
+
+class $RewardsTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          Rewards,
+          Reward,
+          $RewardsFilterComposer,
+          $RewardsOrderingComposer,
+          $RewardsAnnotationComposer,
+          $RewardsCreateCompanionBuilder,
+          $RewardsUpdateCompanionBuilder,
+          (Reward, BaseReferences<_$AppDatabase, Rewards, Reward>),
+          Reward,
+          PrefetchHooks Function()
+        > {
+  $RewardsTableManager(_$AppDatabase db, Rewards table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $RewardsFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $RewardsOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $RewardsAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> type = const Value.absent(),
+                Value<int> amount = const Value.absent(),
+                Value<String?> description = const Value.absent(),
+                Value<int> earnedAt = const Value.absent(),
+              }) => RewardsCompanion(
+                id: id,
+                type: type,
+                amount: amount,
+                description: description,
+                earnedAt: earnedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String type,
+                required int amount,
+                Value<String?> description = const Value.absent(),
+                required int earnedAt,
+              }) => RewardsCompanion.insert(
+                id: id,
+                type: type,
+                amount: amount,
+                description: description,
+                earnedAt: earnedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $RewardsProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      Rewards,
+      Reward,
+      $RewardsFilterComposer,
+      $RewardsOrderingComposer,
+      $RewardsAnnotationComposer,
+      $RewardsCreateCompanionBuilder,
+      $RewardsUpdateCompanionBuilder,
+      (Reward, BaseReferences<_$AppDatabase, Rewards, Reward>),
+      Reward,
+      PrefetchHooks Function()
+    >;
+typedef $UserBalanceCreateCompanionBuilder =
+    UserBalanceCompanion Function({
+      Value<int> id,
+      Value<int> totalPoints,
+      Value<int> usedPoints,
+      required int lastUpdated,
+    });
+typedef $UserBalanceUpdateCompanionBuilder =
+    UserBalanceCompanion Function({
+      Value<int> id,
+      Value<int> totalPoints,
+      Value<int> usedPoints,
+      Value<int> lastUpdated,
+    });
+
+class $UserBalanceFilterComposer extends Composer<_$AppDatabase, UserBalance> {
+  $UserBalanceFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get totalPoints => $composableBuilder(
+    column: $table.totalPoints,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get usedPoints => $composableBuilder(
+    column: $table.usedPoints,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get lastUpdated => $composableBuilder(
+    column: $table.lastUpdated,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $UserBalanceOrderingComposer
+    extends Composer<_$AppDatabase, UserBalance> {
+  $UserBalanceOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get totalPoints => $composableBuilder(
+    column: $table.totalPoints,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get usedPoints => $composableBuilder(
+    column: $table.usedPoints,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get lastUpdated => $composableBuilder(
+    column: $table.lastUpdated,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $UserBalanceAnnotationComposer
+    extends Composer<_$AppDatabase, UserBalance> {
+  $UserBalanceAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get totalPoints => $composableBuilder(
+    column: $table.totalPoints,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get usedPoints => $composableBuilder(
+    column: $table.usedPoints,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get lastUpdated => $composableBuilder(
+    column: $table.lastUpdated,
+    builder: (column) => column,
+  );
+}
+
+class $UserBalanceTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          UserBalance,
+          UserBalanceData,
+          $UserBalanceFilterComposer,
+          $UserBalanceOrderingComposer,
+          $UserBalanceAnnotationComposer,
+          $UserBalanceCreateCompanionBuilder,
+          $UserBalanceUpdateCompanionBuilder,
+          (
+            UserBalanceData,
+            BaseReferences<_$AppDatabase, UserBalance, UserBalanceData>,
+          ),
+          UserBalanceData,
+          PrefetchHooks Function()
+        > {
+  $UserBalanceTableManager(_$AppDatabase db, UserBalance table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $UserBalanceFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $UserBalanceOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $UserBalanceAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> totalPoints = const Value.absent(),
+                Value<int> usedPoints = const Value.absent(),
+                Value<int> lastUpdated = const Value.absent(),
+              }) => UserBalanceCompanion(
+                id: id,
+                totalPoints: totalPoints,
+                usedPoints: usedPoints,
+                lastUpdated: lastUpdated,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> totalPoints = const Value.absent(),
+                Value<int> usedPoints = const Value.absent(),
+                required int lastUpdated,
+              }) => UserBalanceCompanion.insert(
+                id: id,
+                totalPoints: totalPoints,
+                usedPoints: usedPoints,
+                lastUpdated: lastUpdated,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $UserBalanceProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      UserBalance,
+      UserBalanceData,
+      $UserBalanceFilterComposer,
+      $UserBalanceOrderingComposer,
+      $UserBalanceAnnotationComposer,
+      $UserBalanceCreateCompanionBuilder,
+      $UserBalanceUpdateCompanionBuilder,
+      (
+        UserBalanceData,
+        BaseReferences<_$AppDatabase, UserBalance, UserBalanceData>,
+      ),
+      UserBalanceData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3370,4 +4406,7 @@ class $AppDatabaseManager {
       $CustomCategoriesTableManager(_db, _db.customCategories);
   $CategoryAppMappingsTableManager get categoryAppMappings =>
       $CategoryAppMappingsTableManager(_db, _db.categoryAppMappings);
+  $RewardsTableManager get rewards => $RewardsTableManager(_db, _db.rewards);
+  $UserBalanceTableManager get userBalance =>
+      $UserBalanceTableManager(_db, _db.userBalance);
 }

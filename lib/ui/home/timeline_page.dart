@@ -5,6 +5,8 @@ import 'package:yeolda/core/providers.dart';
 import 'package:yeolda/data/db/app_db.dart';
 import 'package:yeolda/data/models/category.dart';
 import 'package:intl/intl.dart';
+import 'package:yeolda/services/notification_listener.dart';
+import 'package:yeolda/services/notification_event_bus.dart';
 import 'package:yeolda/ui/widgets/app_bottom_navigation_bar.dart';
 import 'package:yeolda/ui/widgets/category_utils.dart';
 import 'package:yeolda/ui/widgets/responsive_layout.dart';
@@ -17,7 +19,7 @@ final timelineProvider = FutureProvider.autoDispose
         category: filter.category,
         important: filter.importantOnly ? true : null,
         unread: filter.unreadOnly ? true : null,
-        limit: 50,
+        limit: 500,
       );
     });
 
@@ -54,6 +56,52 @@ class TimelinePage extends ConsumerStatefulWidget {
 
 class _TimelinePageState extends ConsumerState<TimelinePage> {
   TimelineFilter _filter = TimelineFilter();
+  ProviderSubscription<AsyncValue<NotificationEvent>>? _eventSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    // 커스텀 카테고리 캐시 로드
+    _loadCustomCategories();
+    // 알림 이벤트 리스닝 시작
+    _startListeningToEvents();
+  }
+
+  @override
+  void dispose() {
+    // 구독 취소
+    _eventSubscription?.close();
+    super.dispose();
+  }
+
+  Future<void> _loadCustomCategories() async {
+    final repo = ref.read(customCategoryRepoProvider);
+    final categories = await repo.getActiveCategories();
+    CategoryUtils.updateCustomCategoryCache(categories);
+  }
+
+  /// 알림 이벤트를 감지하여 자동 새로고침 (initState에서 안전하게 실행)
+  void _startListeningToEvents() {
+    _eventSubscription = ref.listenManual(notificationEventStreamProvider, (
+      previous,
+      next,
+    ) {
+      next.whenData((event) {
+        if (event.type == NotificationEventType.newNotification) {
+          debugPrint('새 알림 감지 - 타임라인 자동 새로고침');
+          if (mounted) {
+            ref.invalidate(timelineProvider);
+          }
+        } else if (event.type == NotificationEventType.categoryChanged) {
+          debugPrint('커스텀 카테고리 변경 감지 - 캐시 갱신 및 타임라인 새로고침');
+          if (mounted) {
+            _loadCustomCategories();
+            ref.invalidate(timelineProvider);
+          }
+        }
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +111,19 @@ class _TimelinePageState extends ConsumerState<TimelinePage> {
       appBar: AppBar(
         title: const Text('열다 | Open'),
         actions: [
+          // 새로고침 버튼
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              ref.invalidate(timelineProvider);
+            },
+            tooltip: '새로고침',
+          ),
+          // 전체 알림 수 표시 (디버그)
+          IconButton(
+            icon: const Icon(Icons.info_outline),
+            onPressed: _showDebugInfo,
+          ),
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
@@ -191,18 +252,192 @@ class _TimelinePageState extends ConsumerState<TimelinePage> {
             '새로운 알림이 도착하면 여기에 표시됩니다',
             style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
           ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: _addTestNotification,
+            icon: const Icon(Icons.add),
+            label: const Text('테스트 알림 추가'),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildTimelineList(List<NotificationEntry> notifications) {
-    return ListView.builder(
-      itemCount: notifications.length,
-      itemBuilder: (context, index) {
-        final notification = notifications[index];
-        return _buildNotificationCard(notification);
+  /// 테스트 알림 추가 (디버그용)
+  Future<void> _addTestNotification() async {
+    final repo = ref.read(notificationRepoProvider);
+    final now = DateTime.now().millisecondsSinceEpoch;
+
+    // 테스트 알림들을 추가
+    final testNotifications = [
+      {
+        'packageName': 'com.kakao.talk',
+        'appLabel': '카카오톡',
+        'title': '홍길동',
+        'text': '안녕하세요! 잘 지내시나요?',
       },
+      {
+        'packageName': 'com.example.doit',
+        'appLabel': 'Do It',
+        'title': '할 일 알림',
+        'text': '프로젝트 마감일이 다가옵니다',
+      },
+      {
+        'packageName': 'com.instagram.android',
+        'appLabel': 'Instagram',
+        'title': 'user123',
+        'text': '회원님의 게시물에 좋아요를 눌렀습니다',
+      },
+    ];
+
+    for (var i = 0; i < testNotifications.length; i++) {
+      final notif = testNotifications[i];
+      final incoming = IncomingNotification(
+        postedAt: now + (i * 1000), // 1초씩 차이
+        packageName: notif['packageName']!,
+        appLabel: notif['appLabel']!,
+        title: notif['title']!,
+        text: notif['text']!,
+        channelId: 'test_channel',
+        category: null,
+      );
+
+      await repo.insertNotification(incoming);
+    }
+
+    // Provider 갱신
+    ref.invalidate(timelineProvider);
+
+    if (mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('테스트 알림 3개가 추가되었습니다')));
+    }
+  }
+
+  /// 디버그 정보 표시
+  Future<void> _showDebugInfo() async {
+    final repo = ref.read(notificationRepoProvider);
+
+    // 전체 알림 수 조회
+    final allNotifications = await repo.queryTimeline(limit: 1000000);
+
+    // 현재 필터로 조회한 알림 수
+    final filteredNotifications = await repo.queryTimeline(
+      category: _filter.category,
+      important: _filter.importantOnly ? true : null,
+      unread: _filter.unreadOnly ? true : null,
+      limit: 5000,
+    );
+
+    // 카테고리별 알림 수 조회
+    final categoryCount = <String, int>{};
+    for (final notif in allNotifications) {
+      categoryCount[notif.assignedCategory] =
+          (categoryCount[notif.assignedCategory] ?? 0) + 1;
+    }
+
+    // 최근 5개 알림 정보
+    final recentNotifications = allNotifications.take(5).toList();
+
+    if (mounted) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('디버그 정보'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('전체 알림 수: ${allNotifications.length}'),
+                Text('필터링된 알림 수: ${filteredNotifications.length}'),
+                const SizedBox(height: 16),
+                const Text(
+                  '카테고리별 알림 수:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                ...categoryCount.entries.map(
+                  (e) => Padding(
+                    padding: const EdgeInsets.only(left: 16, bottom: 4),
+                    child: Text('${e.key}: ${e.value}'),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  '현재 필터:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('카테고리: ${_filter.category?.name ?? "전체"}'),
+                      Text('중요: ${_filter.importantOnly}'),
+                      Text('읽지 않음: ${_filter.unreadOnly}'),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  '최근 알림 5개:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                ...recentNotifications.map(
+                  (notif) => Padding(
+                    padding: const EdgeInsets.only(left: 16, bottom: 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${notif.appLabel}: ${notif.title}',
+                          style: const TextStyle(fontSize: 12),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          '카테고리: ${notif.assignedCategory}',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('확인'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  Widget _buildTimelineList(List<NotificationEntry> notifications) {
+    return RefreshIndicator(
+      onRefresh: () async {
+        ref.invalidate(timelineProvider);
+        // 새로고침이 완료될 때까지 대기
+        await Future.delayed(const Duration(milliseconds: 500));
+      },
+      child: ListView.builder(
+        itemCount: notifications.length,
+        itemBuilder: (context, index) {
+          final notification = notifications[index];
+          return _buildNotificationCard(notification);
+        },
+      ),
     );
   }
 

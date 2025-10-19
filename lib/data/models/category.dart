@@ -11,6 +11,7 @@ enum AppCategory {
   study,
   finance,
   schedule,
+  youtube,
   shopping,
   news,
   other,

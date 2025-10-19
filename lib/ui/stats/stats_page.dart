@@ -152,11 +152,9 @@ class StatsPage extends ConsumerWidget {
       desktop: 48.0,
     );
 
-    return ResponsiveRowColumn(
-      spacing: 16,
+    return Row(
       children: [
-        Flexible(
-          flex: 1,
+        Expanded(
           child: Card(
             child: Padding(
               padding: EdgeInsets.all(cardPadding),
@@ -182,8 +180,8 @@ class StatsPage extends ConsumerWidget {
             ),
           ),
         ),
-        Flexible(
-          flex: 1,
+        const SizedBox(width: 16),
+        Expanded(
           child: Card(
             child: Padding(
               padding: EdgeInsets.all(cardPadding),

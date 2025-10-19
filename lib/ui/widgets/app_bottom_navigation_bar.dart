@@ -15,6 +15,7 @@ class AppBottomNavigationBar extends StatelessWidget {
         BottomNavigationBarItem(icon: Icon(Icons.timeline), label: '타임라인'),
         BottomNavigationBarItem(icon: Icon(Icons.category), label: '카테고리'),
         BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: '통계'),
+        BottomNavigationBarItem(icon: Icon(Icons.stars), label: '리워드'),
         BottomNavigationBarItem(icon: Icon(Icons.school), label: '학습'),
       ],
       onTap: (index) {
@@ -29,6 +30,9 @@ class AppBottomNavigationBar extends StatelessWidget {
             context.go('/statistics');
             break;
           case 3:
+            context.go('/rewards');
+            break;
+          case 4:
             context.go('/learning');
             break;
         }

@@ -2,11 +2,13 @@ import 'package:drift/drift.dart';
 import 'package:flutter/material.dart' hide Table;
 import 'package:yeolda/data/db/app_db.dart';
 import 'package:yeolda/data/models/custom_category.dart' as model;
+import 'package:yeolda/services/notification_event_bus.dart';
 
 class CustomCategoryRepo {
   final AppDatabase _db;
+  final NotificationEventBus? _eventBus;
 
-  CustomCategoryRepo(this._db);
+  CustomCategoryRepo(this._db, [this._eventBus]);
 
   /// 커스텀 카테고리 생성
   Future<int> createCategory(model.CustomCategory category) async {
@@ -26,6 +28,10 @@ class CustomCategoryRepo {
     if (category.packageNames.isNotEmpty) {
       await _addAppMappings(categoryId, category.packageNames);
     }
+
+    // 카테고리 변경 이벤트 발행
+    _eventBus?.fireCategoryChanged();
+    debugPrint('카테고리 생성 후 이벤트 발행');
 
     return categoryId;
   }
@@ -73,6 +79,10 @@ class CustomCategoryRepo {
       await _addAppMappings(category.id!, category.packageNames);
     }
 
+    // 카테고리 변경 이벤트 발행
+    _eventBus?.fireCategoryChanged();
+    debugPrint('카테고리 업데이트 후 이벤트 발행');
+
     return true;
   }
 
@@ -81,6 +91,13 @@ class CustomCategoryRepo {
     final deleted = await (_db.delete(
       _db.customCategories,
     )..where((t) => t.id.equals(categoryId))).go();
+
+    // 카테고리 변경 이벤트 발행
+    if (deleted > 0) {
+      _eventBus?.fireCategoryChanged();
+      debugPrint('카테고리 삭제 후 이벤트 발행');
+    }
+
     return deleted > 0;
   }
 
@@ -165,6 +182,10 @@ class CustomCategoryRepo {
           ),
           mode: InsertMode.insertOrIgnore,
         );
+
+    // 카테고리 변경 이벤트 발행
+    _eventBus?.fireCategoryChanged();
+    debugPrint('앱 추가 후 이벤트 발행');
   }
 
   /// 카테고리에서 앱 제거
@@ -173,5 +194,9 @@ class CustomCategoryRepo {
           ..where((t) => t.categoryId.equals(categoryId))
           ..where((t) => t.packageName.equals(packageName)))
         .go();
+
+    // 카테고리 변경 이벤트 발행
+    _eventBus?.fireCategoryChanged();
+    debugPrint('앱 제거 후 이벤트 발행');
   }
 }

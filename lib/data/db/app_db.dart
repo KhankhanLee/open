@@ -14,7 +14,37 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (Migrator m) async {
+      await m.createAll();
+    },
+    onUpgrade: (Migrator m, int from, int to) async {
+      if (from < 2) {
+        // rewards 및 user_balance 테이블 생성
+        await m.issueCustomQuery('''
+              CREATE TABLE IF NOT EXISTS rewards (
+                id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                type TEXT NOT NULL,
+                amount INTEGER NOT NULL,
+                description TEXT,
+                earned_at INTEGER NOT NULL
+              );
+            ''');
+
+        await m.issueCustomQuery('''
+              CREATE TABLE IF NOT EXISTS user_balance (
+                id INTEGER NOT NULL PRIMARY KEY DEFAULT 1,
+                total_points INTEGER NOT NULL DEFAULT 0,
+                used_points INTEGER NOT NULL DEFAULT 0,
+                last_updated INTEGER NOT NULL
+              );
+            ''');
+      }
+    },
+  );
 }
 
 LazyDatabase _openConnection() {

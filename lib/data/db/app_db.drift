@@ -41,3 +41,21 @@ CREATE TABLE category_app_mappings (
     created_at INT NOT NULL,
     UNIQUE(category_id, package_name)
 );
+
+-- 리워드 기록
+CREATE TABLE rewards (
+    id INT NOT NULL PRIMARY KEY AUTOINCREMENT,
+    type TEXT NOT NULL,
+    amount INT NOT NULL,
+    description TEXT,
+    earned_at INT NOT NULL
+);
+
+-- 사용자 포인트 잔액
+CREATE TABLE user_balance (
+    id INT NOT NULL PRIMARY KEY DEFAULT 1,
+    total_points INT NOT NULL DEFAULT 0,
+    used_points INT NOT NULL DEFAULT 0,
+    last_updated INT NOT NULL
+);
+

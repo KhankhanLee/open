@@ -1,6 +1,7 @@
 import 'package:yeolda/data/models/category.dart';
 import 'package:yeolda/data/models/custom_category.dart';
 import 'package:yeolda/data/repo/custom_category_repo.dart';
+import 'package:flutter/material.dart';
 
 class ClassifierService {
   final CustomCategoryRepo _customCategoryRepo;
@@ -22,6 +23,15 @@ class ClassifierService {
     final customCategory = await _customCategoryRepo.findCategoryByPackage(
       packageName,
     );
+
+    // 디버그: 패키지명과 커스텀 카테고리 결과 로깅
+    debugPrint('패키지명: $packageName');
+    if (customCategory != null) {
+      debugPrint('커스텀 카테고리 찾음: ${customCategory.name}');
+    } else {
+      debugPrint('커스텀 카테고리 없음 - 기본 분류 사용');
+    }
+
     AppCategory? assignedCategory;
 
     if (customCategory != null) {
@@ -52,42 +62,55 @@ class ClassifierService {
   AppCategory? _classifyByPackage(String packageName) {
     final lower = packageName.toLowerCase();
     // KakaoTalk
-    if (lower.contains('kakaotalk')) {
+    if (lower.contains('kakao.talk') ||
+        lower.contains('kakaotalk') ||
+        lower.contains('com.kakao.talk') ||
+        lower.contains('카카오톡') ||
+        lower.contains('카톡')) {
       return AppCategory.kakaotalk;
     }
     // Instagram
-    if (lower.contains('instagram')) {
+    if (lower.contains('instagram') ||
+        lower.contains('인스타그램') ||
+        lower.contains('인스타')) {
       return AppCategory.instagram;
     }
     // Telegram
-    if (lower.contains('telegram')) {
+    if (lower.contains('telegram') ||
+        lower.contains('텔레그램') ||
+        lower.contains('텔레')) {
       return AppCategory.telegram;
     }
     // Discord
-    if (lower.contains('discord')) {
+    if (lower.contains('discord') ||
+        lower.contains('디스코드') ||
+        lower.contains('디코')) {
       return AppCategory.discord;
     }
     // Slack
-    if (lower.contains('slack')) {
+    if (lower.contains('slack') ||
+        lower.contains('슬랙') ||
+        lower.contains('슬렉')) {
       return AppCategory.slack;
     }
     // Line
-    if (lower.contains('line')) {
+    if (lower.contains('line') || lower.contains('라인')) {
       return AppCategory.line;
     }
-    // Wechat 
-    if (lower.contains('wechat')) {
+    // Wechat
+    if (lower.contains('wechat') || lower.contains('위쳇')) {
       return AppCategory.wechat;
     }
     // Whatsapp
-    if (lower.contains('whatsapp')) {
+    if (lower.contains('whatsapp') || lower.contains('왓츠앱')) {
       return AppCategory.whatsapp;
     }
     // Messenger
-    if (lower.contains('messenger')) {
+    if (lower.contains('messenger') ||
+        lower.contains('메신저') ||
+        lower.contains('메세지')) {
       return AppCategory.messenger;
     }
-
     // Study
     if (lower.contains('duolingo') ||
         lower.contains('memorion') ||
@@ -116,9 +139,17 @@ class ClassifierService {
     if (lower.contains('calendar') ||
         lower.contains('reminder') ||
         lower.contains('todo') ||
+        lower.contains('doit') ||
         lower.contains('alarm') ||
         lower.contains('clock')) {
       return AppCategory.schedule;
+    }
+
+    //Youtube
+    if (lower.contains('youtube') ||
+        lower.contains('com.google.android.youtube') ||
+        lower.contains('com.google.android.youtube.tv')) {
+      return AppCategory.youtube;
     }
 
     // Shopping
@@ -134,8 +165,9 @@ class ClassifierService {
 
     // News
     if (lower.contains('news') ||
-        lower.contains('naver') && !lower.contains('shopping') ||
-        lower.contains('daum')) {
+        lower.contains('naver') && !lower.contains('news') ||
+        lower.contains('daum') ||
+        lower.contains('google')) {
       return AppCategory.news;
     }
 

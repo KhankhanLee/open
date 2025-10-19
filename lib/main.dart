@@ -6,6 +6,7 @@ import 'package:yeolda/ui/home/timeline_page.dart';
 import 'package:yeolda/ui/settings/settings_page.dart';
 import 'package:yeolda/ui/stats/stats_page.dart';
 import 'package:yeolda/ui/categories/categories_page.dart';
+import 'package:yeolda/ui/rewards/rewards_page.dart';
 import 'package:yeolda/ui/study/study_page.dart';
 import 'package:yeolda/ui/splash/splash_screen.dart';
 
@@ -54,6 +55,7 @@ final _router = GoRouter(
       path: '/categories',
       builder: (context, state) => const CategoriesPage(),
     ),
+    GoRoute(path: '/rewards', builder: (context, state) => const RewardsPage()),
     GoRoute(path: '/learning', builder: (context, state) => const StudyPage()),
   ],
   errorBuilder: (context, state) => Scaffold(

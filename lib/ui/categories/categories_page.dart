@@ -30,11 +30,29 @@ final categoryNotificationsProvider = FutureProvider.autoDispose
       return await repo.queryTimeline(category: category, limit: 100);
     });
 
-class CategoriesPage extends ConsumerWidget {
+class CategoriesPage extends ConsumerStatefulWidget {
   const CategoriesPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CategoriesPage> createState() => _CategoriesPageState();
+}
+
+class _CategoriesPageState extends ConsumerState<CategoriesPage> {
+  @override
+  void initState() {
+    super.initState();
+    // 커스텀 카테고리 캐시 로드
+    _loadCustomCategories();
+  }
+
+  Future<void> _loadCustomCategories() async {
+    final repo = ref.read(customCategoryRepoProvider);
+    final categories = await repo.getActiveCategories();
+    CategoryUtils.updateCustomCategoryCache(categories);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final selectedCategory = ref.watch(selectedCategoryProvider);
     final notificationsAsync = ref.watch(
       categoryNotificationsProvider(selectedCategory),
