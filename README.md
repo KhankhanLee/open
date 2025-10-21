@@ -7,7 +7,7 @@
 - **자동 분류**: 알림을 메신저, 카카오톡, 인스타그램, 라인, 텔레그램, 디스코드, 슬랙, 위챗, 왓츠앱, 유튜브, 공부, 금융, 일정, 쇼핑, 뉴스, 기타로 자동 분류
 - **타임라인**: 모든 알림을 시간순으로 확인
 - **필터링**: 카테고리, 중요도, 읽음 상태로 필터링
-- **통계**: 시간대별, 요일별, 앱별 통계 제공 (구현 예정)
+- **통계**: 시간대별, 요일별, 앱별 통계 제공 
 - **학습 기능**: 알림 속 외국어 문장으로 학습 (구현 예정)
 - **리워드 기능**: 포인트로 광고 등을 통해 리워드를 지급 받아 학습 기능 등 추가 기능에 활용할 수 있도록 함. (구현 예정)
 - **로컬 저장**: 모든 데이터는 기기에만 저장
@@ -19,15 +19,14 @@
 - Kotlin: 1.9.0 이상
 ## 앱 모습 (App UI/UX)
 <img width="648" height="1404" alt="image" src="https://github.com/user-attachments/assets/1c578d52-3a5c-47ad-8048-b88a7c75bab0" />
-<img width="648" height="1404" alt="image" src="https://github.com/user-attachments/assets/8ba02977-ef41-4811-8b5a-80d3bacad3c1" />
+<img width="648" height="1404" alt="image" src="https://github.com/user-attachments/assets/6ee8493e-83d1-44d2-a055-5f969b579ea3" />
 <img width="648" height="1404" alt="image" src="https://github.com/user-attachments/assets/6dc3d918-ec3c-478f-874e-6802b3271b31" />
 <img width="648" height="1404" alt="image" src="https://github.com/user-attachments/assets/535dfafd-fa9a-4f06-9fd9-56ccfdd03b9c" />
-<img width="648" height="1404" alt="image" src="https://github.com/user-attachments/assets/5714cd77-3001-48f2-b943-d7949eb66e00" />
-<img width="648" height="1404" alt="image" src="https://github.com/user-attachments/assets/acf8eeda-05ad-4ad0-99d8-23d6297449ba" />
-<img width="648" height="1404" alt="image" src="https://github.com/user-attachments/assets/4ef51987-2ed4-4e65-aaae-41839a51fbd0" />
-<img width="648" height="1404" alt="image" src="https://github.com/user-attachments/assets/a19d2d83-be56-4c3a-a99e-5762e395a547" />
-<img width="648" height="1404" alt="image" src="https://github.com/user-attachments/assets/339c64a9-e6f9-4cda-841a-c5e7f85568a9" />
-<img width="648" height="1404" alt="image" src="https://github.com/user-attachments/assets/d0a9eab1-f491-4953-a4bf-7bd51d5e0c74" />
+<img width="648" height="1404" alt="image" src="https://github.com/user-attachments/assets/d0eced58-8e6e-4612-b564-ad88544a271a" />
+<img width="648" height="1404" alt="image" src="https://github.com/user-attachments/assets/d32dcb66-bc7c-4f19-954c-6b770f45b631" />
+<img width="648" height="1404" alt="image" src="https://github.com/user-attachments/assets/ddc0d218-0327-47a0-ba2f-dec6f58cfc93" />
+<img width="648" height="1404" alt="image" src="https://github.com/user-attachments/assets/6c19630c-2d1e-45b5-b477-2d2077978e1d" />
+<img width="648" height="1404" alt="image" src="https://github.com/user-attachments/assets/5fa3ba9d-d9ba-481f-90fa-e4fcd2c0f9ee" />
 
 ## 🛠️ 설치 및 실행
 
